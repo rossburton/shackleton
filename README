@@ -1,0 +1,50 @@
+Gaury
+===
+
+A clone of Marco Polo[1] for GNOME.  Named after the British explorer and
+diplomat Gerald de Gaury[2].
+
+Concepts
+===
+
+Location rules.  These look at the environment and if they
+evaluate to true, then indicate that you are at a certain location.  For
+example, a rule could look at the MAC address of the gateway and use it to
+determine that you are in the office.
+
+Actions.  These run when either entering or leaving a location.
+
+interface Rule {
+	  /* 0 to n gobject properties, which are used to configure the rule.
+	  The type and blurb is used to construct a UI */
+
+	  /* The name of the context */
+	  char *context;
+	  /* Description for humans */
+	  char *description;
+	  /* How confident is this rule, from 0 to 1. */
+	  double confidence;
+
+	  /* Evaluate the rule */
+	  gboolean evaluate ();
+
+	  /* Some rules can be notified instead of polling (such as active
+	  wireless network), these emit signals. */
+	  signal evaluated(gboolean);
+}
+
+Rule sources:
+- default gateway mac address
+- wireless AP name
+- time of day
+- attached USB devices
+
+Actions:
+- run command
+- debug (show a dialog with a string)
+- mount/umount file system
+- change screen saver password
+
+
+[1] http://www.symonds.id.au/marcopolo/
+[2] http://en.wikipedia.org/wiki/Gerald_de_Gaury
