@@ -5,8 +5,6 @@ from context import *
 from actions import *
 import datetime, time
 
-current_contexts = set()
-
 contexts = {}
 c = Context("home")
 c.addEnterAction(SpawnAction("zenity --info --text 'Mounting...'"))
@@ -22,11 +20,29 @@ rules.append(TimeRule(contexts["daytime"], time_start=datetime.time(9), time_end
 rules.append(WifiNetworkRule(contexts["office"], ssid="OH"))
 rules.append(WifiNetworkRule(contexts["home"], ssid="Burton"))
 
+current_contexts = set()
+
+# First run needs more magic.  First populate current_contexts with the contexts
+# which are active.
+for r in rules:
+    if r.evaluate():
+        current_contexts.add(r.getContext())
+
+# Now enter all contexts we're in, and leave all contexts we're not in.  It
+# might be a good idea to make leaving on startup an option per context.
+for c in contexts.itervalues():
+    if c in current_contexts:
+        c.runEnteringActions()
+    else:
+        c.runLeavingActions()
+
+# Now loop forever looking for changes
 while True:
+    time.sleep(5)
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
-        if r.evaluate() and r.getContext() not in current_contexts:
+        if r.evaluate():
             current_contexts.add(r.getContext())
     
     for c in current_contexts.difference(old_contexts):
@@ -35,9 +51,3 @@ while True:
     for c in old_contexts.difference(current_contexts):
         print "Left", c
         c.runLeavingActions()
-    
-    time.sleep(5)
-
-# need some way of marking a default context so for example the screensaver is
-# locked when not at home on startup. maybe on first run, execute the leave
-# action on any contexts we're not part of?
