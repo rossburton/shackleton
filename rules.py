@@ -60,8 +60,13 @@ class WifiNetworkRule(Rule):
                 device_type = props[2]
                 if device_type != 2:
                     continue
-                
+                # TODO: check that we have an IP, is connected, or something.
+                # Otherwise this is true when we're still getting an IP, which
+                # isn't good.
                 network_path = props[19]
+                if not network_path:
+                    # No active network
+                    continue
                 network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
                 ssid = network.getProperties()[1]
                 if ssid == self.ssid:
