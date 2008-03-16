@@ -18,11 +18,6 @@ class Source:
         return ()
 
 
-class AlwaysSource(Source):
-    def evaluate(self):
-        return True
-
-
 class TimeSource(Source):
     @staticmethod
     def getProperties():
