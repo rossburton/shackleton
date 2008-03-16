@@ -1,3 +1,5 @@
+# TODO: make running leave on startup optional
+
 class Context:
     def __init__(self, name):
         self.name = name
