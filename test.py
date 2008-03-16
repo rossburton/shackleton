@@ -38,3 +38,7 @@ while True:
         c.runLeavingActions()
     
     time.sleep(5)
+
+# need some way of marking a default context so for example the screensaver is
+# locked when not at home on startup. maybe on first run, execute the leave
+# action on any contexts we're not part of?
