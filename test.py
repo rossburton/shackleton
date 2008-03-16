@@ -3,7 +3,8 @@
 from rules import *
 from context import *
 from actions import *
-import datetime, time
+import datetime
+from time import sleep
 
 contexts = {}
 c = Context("home")
@@ -38,7 +39,7 @@ for c in contexts.itervalues():
 
 # Now loop forever looking for changes
 while True:
-    time.sleep(5)
+    sleep(5)
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
