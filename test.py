@@ -9,7 +9,10 @@ current_contexts = set()
 
 contexts = {}
 c = Context("home")
-c.addEnterAction(DebugAction("In Home action"))
+c.addEnterAction(SpawnAction("zenity --info --text 'Mounting...'"))
+c.addLeaveAction(SpawnAction("zenity --info --text 'Unmounting...'"))
+c.addEnterAction(ScreensaverLockAction(False))
+c.addLeaveAction(ScreensaverLockAction(True))
 contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
