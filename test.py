@@ -1,8 +1,10 @@
 #! /usr/bin/python
 
-from rules import *
-from context import *
 from actions import *
+from context import *
+from rules import *
+from sources import *
+
 import datetime
 from time import sleep
 
@@ -17,9 +19,9 @@ contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
 
 rules = []
-rules.append(TimeRule(contexts["daytime"], time_start=datetime.time(9), time_end=datetime.time(18)))
-rules.append(WifiNetworkRule(contexts["office"], ssid="OH"))
-rules.append(WifiNetworkRule(contexts["home"], ssid="Burton"))
+rules.append(Rule(contexts["daytime"], TimeSource(time_start=datetime.time(9), time_end=datetime.time(18))))
+rules.append(Rule(contexts["office"], WifiNetworkSource(ssid="OH")))
+rules.append(Rule(contexts["home"], WifiNetworkSource(ssid="Burton")))
 
 current_contexts = set()
 
@@ -27,7 +29,7 @@ current_contexts = set()
 # which are active.
 for r in rules:
     if r.evaluate():
-        current_contexts.add(r.getContext())
+        current_contexts.add(r.context)
 
 # Now enter all contexts we're in, and leave all contexts we're not in.  It
 # might be a good idea to make leaving on startup an option per context.
