@@ -58,7 +58,7 @@ class WifiNetworkRule(Rule):
             if device.getLinkActive():
                 props = device.getProperties()
                 device_type = props[2]
-                if device_type != 2:
+                if device_type != 2: # "Wireless"
                     continue
                 # TODO: check that we have an IP, is connected, or something.
                 # Otherwise this is true when we're still getting an IP, which
