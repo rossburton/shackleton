@@ -4,6 +4,7 @@ class Rule:
     def __init__(self, context, **kwargs):
         self.context = context;
 
+        # Parse the properties
         for (name, expected_type) in self.getProperties():
             v = kwargs[name]
             if not isinstance(v, expected_type):
@@ -23,7 +24,6 @@ class Rule:
 
     def evaluate(self):
         pass
-
 
 class AlwaysRule(Rule):
     def evaluate(self):
