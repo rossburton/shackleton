@@ -3,7 +3,7 @@
 from rules import *
 from context import *
 from actions import *
-import datetime
+import datetime, time
 
 current_contexts = set()
 
@@ -19,15 +19,19 @@ rules.append(TimeRule(contexts["daytime"], time_start=datetime.time(9), time_end
 rules.append(WifiNetworkRule(contexts["office"], ssid="OH"))
 rules.append(WifiNetworkRule(contexts["home"], ssid="Burton"))
 
-old_contexts = current_contexts.copy()
-current_contexts.clear()
-for r in rules:
-    if r.evaluate() and r.getContext() not in current_contexts:
-        current_contexts.add(r.getContext())
-
-for c in current_contexts.difference(old_contexts):
-    print "Entered", c
-    c.runEnteringActions()
-for c in old_contexts.difference(current_contexts):
-    print "Left", c
-    c.runLeavingActions()
+while True:
+    print "."
+    old_contexts = current_contexts.copy()
+    current_contexts.clear()
+    for r in rules:
+        if r.evaluate() and r.getContext() not in current_contexts:
+            current_contexts.add(r.getContext())
+    
+    for c in current_contexts.difference(old_contexts):
+        print "Entered", c
+        c.runEnteringActions()
+    for c in old_contexts.difference(current_contexts):
+        print "Left", c
+        c.runLeavingActions()
+    
+    time.sleep(5)
