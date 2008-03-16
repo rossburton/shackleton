@@ -1,6 +1,9 @@
 import datetime, dbus
 
 class Source:
+    # TODO: Marco Polo has the neat ability for sources to suggest values for
+    # the properties
+    
     def __init__(self, **kwargs):
         # Parse the properties
         for (name, expected_type) in self.getProperties():
