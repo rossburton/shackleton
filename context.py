@@ -9,9 +9,6 @@ class Context:
     def getName(self):
         return self.name
 
-    def __repr__(self):
-        return self.name
-
     def addEnterAction(self, action):
         self.entering_actions.append(action)
 
