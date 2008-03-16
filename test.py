@@ -23,7 +23,6 @@ rules.append(WifiNetworkRule(contexts["office"], ssid="OH"))
 rules.append(WifiNetworkRule(contexts["home"], ssid="Burton"))
 
 while True:
-    print "."
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
