@@ -9,8 +9,16 @@ class Source:
         """A list of (name, type) pairs."""
         return ()
 
+    def getPollInterval(self):
+        # Return the number of seconds between polls if this source should be
+        # polled, or 0 if it will fire signals when its evaluation state has
+        # changed.
+        raise NotImplementedError
+
+    # TODO: somehow define how sources will announce that they need to be reevaluated
+    
     def evaluate(self, args):
-        pass
+        raise NotImplementedError
 
 
 class TimeSource(Source):

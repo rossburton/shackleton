@@ -44,6 +44,8 @@ for c in contexts.itervalues():
 
 # Now loop forever looking for changes
 while True:
+    # TODO: don't hardcode 5 but work out an interval from the active source
+    # poll intervals
     sleep(5)
     old_contexts = current_contexts.copy()
     current_contexts.clear()
