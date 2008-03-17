@@ -8,8 +8,7 @@ from sources import *
 import datetime, logging
 from time import sleep
 
-logger = logging.getLogger("gaury")
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 contexts = {}
 c = Context("home")
@@ -39,10 +38,8 @@ for r in rules:
 # might be a good idea to make leaving on startup an option per context.
 for c in contexts.itervalues():
     if c in current_contexts:
-        logger.debug ("Entering (initially) %s" % c)
         c.runEnteringActions()
     else:
-        logger.debug ("Leaving (initially) %s" % c)
         c.runLeavingActions()
 
 # Now loop forever looking for changes
@@ -55,8 +52,6 @@ while True:
             current_contexts.add(r.context)
     
     for c in current_contexts.difference(old_contexts):
-        logger.debug ("Entering %s" % c)
         c.runEnteringActions()
     for c in old_contexts.difference(current_contexts):
-        logger.debug ("Leaving %s" % c)
         c.runLeavingActions()
