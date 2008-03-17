@@ -43,6 +43,7 @@ class WifiNetworkSource(Source):
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
+            # TODO: I guess this is covered by the props[5] test
             if not device.getLinkActive():
                 continue
             
