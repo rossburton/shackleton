@@ -26,6 +26,10 @@ class TimeSource(Source):
     def getProperties():
         return (("time_start", datetime.time), ("time_end", datetime.time))
 
+    def getPollInterval(self):
+        # Poll every minute
+        return 60
+
     def evaluate(self, args):
         now = datetime.datetime.now().time()
         return args["time_start"] < now and now < args["time_end"]
