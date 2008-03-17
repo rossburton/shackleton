@@ -42,11 +42,11 @@ for c in contexts.itervalues():
     else:
         c.runLeavingActions()
 
+poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
+
 # Now loop forever looking for changes
 while True:
-    # TODO: don't hardcode 5 but work out an interval from the active source
-    # poll intervals
-    sleep(5)
+    sleep(poll_interval)
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
