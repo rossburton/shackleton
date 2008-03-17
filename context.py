@@ -21,3 +21,5 @@ class Context:
     def runLeavingActions(self):
         [a.run() for a in self.leaving_actions]
 
+    def __str__(self):
+        return self.name
