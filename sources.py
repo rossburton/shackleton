@@ -43,20 +43,24 @@ class WifiNetworkSource(Source):
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
-            if device.getLinkActive():
-                props = device.getProperties()
-                device_type = props[2]
-                if device_type != 2: # "Wireless"
-                    continue
-                # TODO: check that we have an IP, is connected, or something.
-                # Otherwise this is true when we're still getting an IP, which
-                # isn't good.
-                network_path = props[19]
-                if not network_path:
-                    # No active network
-                    continue
-                network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
-                ssid = network.getProperties()[1]
-                if ssid == self.ssid:
-                    return True
+            if not device.getLinkActive():
+                continue
+            
+            props = device.getProperties()
+            if not props[5]:
+                # This device isn't active yet
+                continue
+            
+            if props[2] != 2:
+                # Device type is not wireless
+                continue
+            
+            network_path = props[19]
+            if not network_path:
+                # No active network
+                continue
+            network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
+            ssid = network.getProperties()[1]
+            if ssid == self.ssid:
+                return True
         return False
