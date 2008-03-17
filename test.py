@@ -1,8 +1,8 @@
 #! /usr/bin/python
 
 from actions import *
-from context import *
-from rules import *
+from context import Context
+from rules import Rule
 from sources import *
 
 import datetime, logging
