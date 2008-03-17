@@ -44,6 +44,10 @@ class WifiNetworkSource(Source):
     def getProperties():
         return (("ssid", str),)
     
+    def getPollInterval(self):
+        # TODO: return 0 and instead get signals from NM
+        return 10
+    
     def evaluate(self, args):
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
