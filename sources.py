@@ -3,19 +3,14 @@ import datetime, dbus
 class Source:
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
-    
-    def __init__(self, **kwargs):
-        # Parse the properties
-        for (name, expected_type) in self.getProperties():
-            v = kwargs[name]
-            if not isinstance(v, expected_type):
-                raise TypeError("%s isn't a %s" % (name, expected_type))
-            setattr(self, name, v)
 
     @staticmethod
     def getProperties():
         """A list of (name, type) pairs."""
         return ()
+
+    def evaluate(self, args):
+        pass
 
 
 class TimeSource(Source):
@@ -23,15 +18,13 @@ class TimeSource(Source):
     def getProperties():
         return (("time_start", datetime.time), ("time_end", datetime.time))
 
-    def evaluate(self):
+    def evaluate(self, args):
         now = datetime.datetime.now().time()
-        return self.time_start < now and now < self.time_end
+        return args["time_start"] < now and now < args["time_end"]
 
 
 class WifiNetworkSource(Source):
     def __init__(self, **kwargs):
-        Source.__init__(self, **kwargs)
-
         self.bus = dbus.SystemBus()
         self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
     
@@ -39,7 +32,7 @@ class WifiNetworkSource(Source):
     def getProperties():
         return (("ssid", str),)
     
-    def evaluate(self):
+    def evaluate(self, args):
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
@@ -62,6 +55,6 @@ class WifiNetworkSource(Source):
                 continue
             network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
             ssid = network.getProperties()[1]
-            if ssid == self.ssid:
+            if ssid == args["ssid"]:
                 return True
         return False
