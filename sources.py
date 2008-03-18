@@ -5,6 +5,9 @@ cache = {}
 def getSource(name):
     global cache
 
+    # TODO: some sources can be cached (wifi), some are better created many
+    # times (gconf key watcher).
+
     s = cache.get(name, None)
     if s:
         return s
@@ -21,6 +24,10 @@ class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
 
+    __gsignals__ = {
+        'changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
+        }
+    
     def __init__(self):
         gobject.GObject.__init__(self)
     
