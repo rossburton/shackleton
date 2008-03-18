@@ -65,8 +65,8 @@ while True:
 
     # Run leave before enter
     for c in old_contexts.difference(current_contexts):
-        pynotify.Notification("Changing Context", "Leaving %s" % c).show()
+        notify.enter(c)
         c.runLeavingActions()
     for c in current_contexts.difference(old_contexts):
-        pynotify.Notification("Changing Context", "Entering %s" % c).show()
+        notify.leave(c)
         c.runEnteringActions()
