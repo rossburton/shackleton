@@ -51,10 +51,7 @@ for c in contexts.itervalues():
 # Calculate the poll interval
 poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
 
-# Now loop forever looking for changes
-while True:
-    # TODO: if poll_interval is 0, wait for the signals
-    sleep(poll_interval)
+def poll():
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
@@ -68,3 +65,9 @@ while True:
     for c in current_contexts.difference(old_contexts):
         notify.enter(c)
         c.runEnteringActions()
+
+# Now loop forever looking for changes
+while True:
+    # TODO: if poll_interval is 0, wait for the signals
+    sleep(poll_interval)
+    poll()
