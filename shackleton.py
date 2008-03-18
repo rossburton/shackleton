@@ -11,6 +11,10 @@ from time import sleep
 #logging.basicConfig(level=logging.DEBUG)
 
 contexts = {}
+rules = []
+
+# TODO: this needs to be read from a configuration file...
+
 c = Context("home")
 c.addEnterAction(SpawnAction("zenity --info --text 'Mounting...'"))
 c.addLeaveAction(SpawnAction("zenity --info --text 'Unmounting...'"))
@@ -20,7 +24,6 @@ contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
 
-rules = []
 # TODO: Instead of creating multiple sources, use a single instance
 rules.append(Rule(contexts["daytime"], TimeSource(), time_start=datetime.time(9), time_end=datetime.time(18)))
 rules.append(Rule(contexts["office"], WifiNetworkSource(), ssid="OH"))
