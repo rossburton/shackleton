@@ -1,4 +1,4 @@
-import datetime, dbus
+import datetime, dbus, gobject
 
 cache = {}
 
@@ -16,7 +16,7 @@ def getSource(name):
     
     return None
 
-class Source:
+class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
 
