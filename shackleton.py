@@ -63,8 +63,8 @@ while True:
 
     # Run leave before enter
     for c in old_contexts.difference(current_contexts):
-        notify.enter(c)
+        notify.leave(c)
         c.runLeavingActions()
     for c in current_contexts.difference(old_contexts):
-        notify.leave(c)
+        notify.enter(c)
         c.runEnteringActions()
