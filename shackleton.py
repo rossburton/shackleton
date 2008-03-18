@@ -7,8 +7,11 @@ from sources import *
 
 import datetime, logging
 from time import sleep
+import pynotify
 
 #logging.basicConfig(level=logging.DEBUG)
+
+pynotify.init("Shackleton")
 
 contexts = {}
 rules = []
@@ -45,6 +48,7 @@ for c in contexts.itervalues():
         c.runLeavingActions()
 for c in contexts.itervalues():
     if c in current_contexts:
+        pynotify.Notification("Changing Context", "Entering %s" % c).show()
         c.runEnteringActions()
 
 # Calculate the poll interval
@@ -62,6 +66,8 @@ while True:
 
     # Run leave before enter
     for c in old_contexts.difference(current_contexts):
+        pynotify.Notification("Changing Context", "Leaving %s" % c).show()
         c.runLeavingActions()
     for c in current_contexts.difference(old_contexts):
+        pynotify.Notification("Changing Context", "Entering %s" % c).show()
         c.runEnteringActions()
