@@ -35,25 +35,30 @@ for r in rules:
         current_contexts.add(r.context)
 
 # Now enter all contexts we're in, and leave all contexts we're not in.  It
-# might be a good idea to make leaving on startup an option per context.
+# might be a good idea to make leaving on startup an option per context.  This
+# has to be done in two loops so that we leave before entering.
+for c in contexts.itervalues():
+    if c not in current_contexts:
+        c.runLeavingActions()
 for c in contexts.itervalues():
     if c in current_contexts:
         c.runEnteringActions()
-    else:
-        c.runLeavingActions()
 
+# Calculate the poll interval
 poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
 
 # Now loop forever looking for changes
 while True:
+    # TODO: if poll_interval is 0, wait for the signals
     sleep(poll_interval)
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
         if r.evaluate():
             current_contexts.add(r.context)
-    
-    for c in current_contexts.difference(old_contexts):
-        c.runEnteringActions()
+
+    # Run leave before enter
     for c in old_contexts.difference(current_contexts):
         c.runLeavingActions()
+    for c in current_contexts.difference(old_contexts):
+        c.runEnteringActions()
