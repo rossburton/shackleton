@@ -10,7 +10,7 @@ def getSource(name):
         return s
 
     c = globals().get(name, None)
-    if c is not Source and issubclass(c, Source):
+    if c and c is not Source and issubclass(c, Source):
         cache[name] = c()
         return cache[name]
     
