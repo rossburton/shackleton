@@ -26,7 +26,7 @@ Sources:
 - Attached Bluetooth device
 - Present Zeroconf names
 - Current IP address
-
+- Video output name (i.e. VGA enabled)
 
 Actions:
 - Run command
