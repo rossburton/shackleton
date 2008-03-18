@@ -6,10 +6,9 @@ from rules import Rule
 from sources import getSource
 import notify
 
-import datetime, logging
-from time import sleep
+import datetime, gobject
 
-
+#import logging
 #logging.basicConfig(level=logging.DEBUG)
 
 contexts = {}
@@ -48,8 +47,6 @@ for c in contexts.itervalues():
         notify.enter(c)
         c.runEnteringActions()
 
-# Calculate the poll interval
-poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
 
 def poll():
     old_contexts = current_contexts.copy()
@@ -65,9 +62,12 @@ def poll():
     for c in current_contexts.difference(old_contexts):
         notify.enter(c)
         c.runEnteringActions()
+    
+    return True
 
-# Now loop forever looking for changes
-while True:
-    # TODO: if poll_interval is 0, wait for the signals
-    sleep(poll_interval)
-    poll()
+# Calculate the poll interval
+poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
+if poll_interval:
+    gobject.timeout_add(poll_interval * 1000, poll)
+
+gobject.MainLoop().run()
