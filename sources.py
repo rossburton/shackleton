@@ -16,10 +16,14 @@ def getSource(name):
     
     return None
 
+
 class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
 
+    def __init__(self):
+        gobject.GObject.__init__(self)
+    
     @staticmethod
     def getProperties():
         """A list of (name, type) pairs."""
@@ -31,13 +35,15 @@ class Source(gobject.GObject):
         # changed.
         raise NotImplementedError
 
-    # TODO: somehow define how sources will announce that they need to be reevaluated
-    
     def evaluate(self, args):
         raise NotImplementedError
+gobject.type_register(Source)
 
 
 class TimeSource(Source):
+    def __init__(self):
+        Source.__init__(self)
+
     @staticmethod
     def getProperties():
         return (("time_start", datetime.time), ("time_end", datetime.time))
@@ -49,10 +55,12 @@ class TimeSource(Source):
     def evaluate(self, args):
         now = datetime.datetime.now().time()
         return args["time_start"] < now and now < args["time_end"]
+gobject.type_register(TimeSource)
 
 
 class WifiNetworkSource(Source):
     def __init__(self, **kwargs):
+        Source.__init__(self)
         self.bus = dbus.SystemBus()
         self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
     
@@ -90,9 +98,13 @@ class WifiNetworkSource(Source):
             if ssid == args["ssid"]:
                 return True
         return False
+gobject.type_register(WifiNetworkSource)
 
 
 class GConfSource(Source):
+    def __init__(self):
+        Source.__init__(self)
+
     @staticmethod
     def getProperties():
         return (("key", str), ("value", object))
@@ -105,3 +117,4 @@ class GConfSource(Source):
         import gconf
         client = gconf.client_get_default()
         return client.get_value(args["key"]) == args["value"]
+gobject.type_register(GConfSource)
