@@ -90,3 +90,18 @@ class WifiNetworkSource(Source):
             if ssid == args["ssid"]:
                 return True
         return False
+
+
+class GConfSource(Source):
+    @staticmethod
+    def getProperties():
+        return (("key", str), ("value", object))
+    
+    def getPollInterval(self):
+        # TODO: return 0 and instead get key change notifications
+        return 10
+    
+    def evaluate(self, args):
+        import gconf
+        client = gconf.client_get_default()
+        return client.get_value(args["key"]) == args["value"]
