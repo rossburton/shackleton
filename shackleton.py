@@ -3,7 +3,7 @@
 from actions import *
 from context import Context
 from rules import Rule
-from sources import *
+from sources import getSource
 import notify
 
 import datetime, logging
@@ -14,7 +14,6 @@ from time import sleep
 
 contexts = {}
 rules = []
-
 # TODO: this needs to be read from a configuration file...
 
 c = Context("home")
@@ -26,10 +25,9 @@ contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
 
-# TODO: Instead of creating multiple sources, use a single instance
-rules.append(Rule(contexts["daytime"], TimeSource(), time_start=datetime.time(9), time_end=datetime.time(18)))
-rules.append(Rule(contexts["office"], WifiNetworkSource(), ssid="OH"))
-rules.append(Rule(contexts["home"], WifiNetworkSource(), ssid="Burton"))
+rules.append(Rule(contexts["daytime"], getSource("TimeSource"), time_start=datetime.time(9), time_end=datetime.time(18)))
+rules.append(Rule(contexts["office"], getSource("WifiNetworkSource"), ssid="OH"))
+rules.append(Rule(contexts["home"], getSource("WifiNetworkSource"), ssid="Burton"))
 
 current_contexts = set()
 

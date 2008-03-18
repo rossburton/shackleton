@@ -1,5 +1,21 @@
 import datetime, dbus
 
+cache = {}
+
+def getSource(name):
+    global cache
+
+    s = cache.get(name, None)
+    if s:
+        return s
+
+    c = globals().get(name, None)
+    if c is not Source and issubclass(c, Source):
+        cache[name] = c()
+        return cache[name]
+    
+    return None
+
 class Source:
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
