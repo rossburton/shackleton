@@ -22,12 +22,20 @@ c.addLeaveAction(ScreensaverLockAction(True))
 contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
+contexts["keyset"] = Context("keyset")
 
 rules.append(Rule(contexts["daytime"], "TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
 rules.append(Rule(contexts["office"], "WifiNetworkSource", ssid="OH"))
+rules.append(Rule(contexts["keyset"], "GConfSource", key="/apps/dates_window_maximized", value=True))
 rules.append(Rule(contexts["home"], "WifiNetworkSource", ssid="Burton"))
 
 current_contexts = set()
+
+for r in rules:
+    def rule_changed(rule):
+        # TODO: instead of reevaluating everything, just re-run this rule
+        reevaluate()
+    r.connect("changed", rule_changed)
 
 # First run needs more magic.  First populate current_contexts with the contexts
 # which are active.
@@ -47,7 +55,7 @@ for c in contexts.itervalues():
         c.runEnteringActions()
 
 
-def poll():
+def reevaluate():
     old_contexts = current_contexts.copy()
     current_contexts.clear()
     for r in rules:
@@ -61,7 +69,9 @@ def poll():
     for c in current_contexts.difference(old_contexts):
         notify.enter(c)
         c.runEnteringActions()
-    
+
+def poll():
+    reevaluate()
     return True
 
 # Calculate the poll interval
