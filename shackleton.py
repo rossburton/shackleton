@@ -34,7 +34,12 @@ contexts["daytime-at-office"] = Context("daytime-at-office")
 contexts["daytime-at-office"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
 contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
 
- 
+contexts["on-the-go"] = Context("on-the-go")
+contexts["on-the-go"].addRule(Rule("BatterySource", on_battery=True))
+contexts["on-the-go"].addEnterAction(SpawnAction("zenity --info --text 'On the go!'"))
+contexts["on-the-go"].addLeaveAction(SpawnAction("zenity --info --text 'Plugged!'"))
+
+
 current_contexts = set()
 
 for c in contexts.itervalues():

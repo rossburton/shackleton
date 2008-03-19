@@ -135,3 +135,31 @@ class GConfSource(Source):
         client = gconf.client_get_default()
         return client.get_value(args["key"]) == args["value"]
 gobject.type_register(GConfSource)
+
+
+class BatterySource(Source):
+
+    __instance = None
+    def __new__(cls,somearg):
+        # Make this a singleton
+        if not cls.__instance:
+            cls.__instance = super(cls,BatterySource).__new__(cls)
+        return cls.__instance
+
+    def __init__(self, args):
+        Source.__init__(self, args)
+        self.bus = dbus.SessionBus()
+        self.pm = self.bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
+    
+    @staticmethod
+    def getProperties():
+        return (("on_battery", bool),)
+    
+    def getPollInterval(self):
+        # TODO: return 0 and instead get signals from PM
+        return 10
+    
+    def evaluate(self, args):
+        on_battery = self.pm.GetOnBattery()
+        return on_battery == args["on_battery"]
+gobject.type_register(BatterySource)
