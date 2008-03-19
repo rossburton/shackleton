@@ -3,6 +3,8 @@
 import logging
 logger = logging.getLogger("Context")
 
+# TODO: add flag for "silent" so that context changes are not announced
+
 class Context:
     def __init__(self, name):
         self.name = name
