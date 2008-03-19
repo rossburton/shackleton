@@ -111,6 +111,8 @@ gobject.type_register(WifiNetworkSource)
 
 
 class GConfSource(Source):
+    # TODO: have a singleton per GConf key
+
     def __init__(self, args):
         Source.__init__(self, args)
 
