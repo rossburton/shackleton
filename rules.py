@@ -1,7 +1,7 @@
 class Rule:
     def __init__(self, context, source, **kwargs):
         self.context = context
-        self.source = self.__getSource(source)
+        self.source = self.__getSource(source, kwargs)
         self.args = {}
 
         # Parse the properties
@@ -11,11 +11,11 @@ class Rule:
                 raise TypeError("%s isn't a %s" % (name, expected_type))
             self.args[name] = v
 
-    def __getSource(self, name):
+    def __getSource(self, name, args):
         import sources
         c = getattr(sources, name, None)
         if c and c is not sources.Source and issubclass(c, sources.Source):
-            return c()
+            return c(args)
         raise NameError
 
     def evaluate(self):

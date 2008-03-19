@@ -14,7 +14,7 @@ class Source(gobject.GObject):
         'changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
         }
     
-    def __init__(self):
+    def __init__(self, args):
         gobject.GObject.__init__(self)
     
     @staticmethod
@@ -34,8 +34,8 @@ gobject.type_register(Source)
 
 
 class TimeSource(Source):
-    def __init__(self):
-        Source.__init__(self)
+    def __init__(self, args):
+        Source.__init__(self, args)
 
     @staticmethod
     def getProperties():
@@ -52,8 +52,8 @@ gobject.type_register(TimeSource)
 
 
 class WifiNetworkSource(Source):
-    def __init__(self, **kwargs):
-        Source.__init__(self)
+    def __init__(self, args):
+        Source.__init__(self, args)
         self.bus = dbus.SystemBus()
         self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
     
@@ -95,8 +95,8 @@ gobject.type_register(WifiNetworkSource)
 
 
 class GConfSource(Source):
-    def __init__(self):
-        Source.__init__(self)
+    def __init__(self, args):
+        Source.__init__(self, args)
 
     @staticmethod
     def getProperties():
