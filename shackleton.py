@@ -15,8 +15,8 @@ contexts = {}
 
 c = Context("home")
 c.addRule(Rule("WifiNetworkSource", ssid="Burton"))
-c.addEnterAction(SpawnAction("zenity --info --text 'Mounting...'"))
-c.addLeaveAction(SpawnAction("zenity --info --text 'Unmounting...'"))
+c.addEnterAction(DebugAction("Mounting..."))
+c.addLeaveAction(DebugAction("Unmounting..."))
 c.addEnterAction(ScreensaverLockAction(False))
 c.addLeaveAction(ScreensaverLockAction(True))
 contexts["home"] = c
@@ -36,8 +36,8 @@ contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
 
 contexts["on-the-go"] = Context("on-the-go")
 contexts["on-the-go"].addRule(Rule("BatterySource", on_battery=True))
-contexts["on-the-go"].addEnterAction(SpawnAction("zenity --info --text 'On the go!'"))
-contexts["on-the-go"].addLeaveAction(SpawnAction("zenity --info --text 'Plugged!'"))
+contexts["on-the-go"].addEnterAction(DebugAction("On the go!"))
+contexts["on-the-go"].addLeaveAction(DebugAction("Plugged!"))
 
 
 current_contexts = set()
