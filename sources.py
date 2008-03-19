@@ -34,6 +34,14 @@ gobject.type_register(Source)
 
 
 class TimeSource(Source):
+
+    __instance = None
+    def __new__(cls,somearg):
+        # Make this a singleton
+        if not cls.__instance:
+            cls.__instance = super(cls,TimeSource).__new__(cls)
+        return cls.__instance
+
     def __init__(self, args):
         Source.__init__(self, args)
 
@@ -52,6 +60,14 @@ gobject.type_register(TimeSource)
 
 
 class WifiNetworkSource(Source):
+
+    __instance = None
+    def __new__(cls,somearg):
+        # Make this a singleton
+        if not cls.__instance:
+            cls.__instance = super(cls,TimeSource).__new__(cls)
+        return cls.__instance
+
     def __init__(self, args):
         Source.__init__(self, args)
         self.bus = dbus.SystemBus()
