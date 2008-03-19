@@ -1,5 +1,8 @@
 import datetime, dbus, gobject
 
+from dbus.mainloop.glib import DBusGMainLoop
+DBusGMainLoop(set_as_default=True)
+
 class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
@@ -144,14 +147,18 @@ class BatterySource(Source):
         Source.__init__(self, args)
         self.bus = dbus.SessionBus()
         self.pm = self.bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
-    
+        self.pm.connect_to_signal("OnBatteryChanged", self.changed)
+
     @staticmethod
     def getProperties():
         return (("on_battery", bool),)
     
     def getPollInterval(self):
-        # TODO: return 0 and instead get signals from PM
-        return 10
+        return 0
+    
+    def changed(self, bool):
+        # TODO: cache the value and use it when evaluating to avoid DBus calls
+        self.emit("changed")
     
     def evaluate(self, args):
         on_battery = self.pm.GetOnBattery()
