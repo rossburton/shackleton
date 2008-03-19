@@ -23,17 +23,9 @@ contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
 
-
-def getSource(name):
-    import sources
-    c = getattr(sources, name, None)
-    if c and c is not sources.Source and issubclass(c, sources.Source):
-        return c()
-    return None
-
-rules.append(Rule(contexts["daytime"], getSource("TimeSource"), time_start=datetime.time(9), time_end=datetime.time(18)))
-rules.append(Rule(contexts["office"], getSource("WifiNetworkSource"), ssid="OH"))
-rules.append(Rule(contexts["home"], getSource("WifiNetworkSource"), ssid="Burton"))
+rules.append(Rule(contexts["daytime"], "TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
+rules.append(Rule(contexts["office"], "WifiNetworkSource", ssid="OH"))
+rules.append(Rule(contexts["home"], "WifiNetworkSource", ssid="Burton"))
 
 current_contexts = set()
 
