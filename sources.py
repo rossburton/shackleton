@@ -1,27 +1,10 @@
 import datetime, dbus, gobject
 
-cache = {}
-
 # TODO: some sources can be single-instance (wifi), some are better created many
 # times (gconf key watcher, one per key).  Some sort of per-class factory method
 # is required.  This means changing the Rule API so that sources are constructed
 # with their arguments so that the a singleton or new instance can be created as
 # required.
-
-def getSource(name):
-    global cache
-
-    s = cache.get(name, None)
-    if s:
-        return s
-
-    c = globals().get(name, None)
-    if c and c is not Source and issubclass(c, Source):
-        cache[name] = c()
-        return cache[name]
-    
-    return None
-
 
 class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for

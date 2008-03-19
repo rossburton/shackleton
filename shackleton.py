@@ -3,7 +3,6 @@
 from actions import *
 from context import Context
 from rules import Rule
-from sources import getSource
 import notify
 
 import datetime, gobject
@@ -23,6 +22,14 @@ c.addLeaveAction(ScreensaverLockAction(True))
 contexts["home"] = c
 contexts["daytime"] = Context("daytime")
 contexts["office"] = Context("office")
+
+
+def getSource(name):
+    import sources
+    c = getattr(sources, name, None)
+    if c and c is not sources.Source and issubclass(c, sources.Source):
+        return c()
+    return None
 
 rules.append(Rule(contexts["daytime"], getSource("TimeSource"), time_start=datetime.time(9), time_end=datetime.time(18)))
 rules.append(Rule(contexts["office"], getSource("WifiNetworkSource"), ssid="OH"))
