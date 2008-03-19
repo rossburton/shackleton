@@ -65,7 +65,7 @@ class WifiNetworkSource(Source):
     def __new__(cls,somearg):
         # Make this a singleton
         if not cls.__instance:
-            cls.__instance = super(cls,TimeSource).__new__(cls)
+            cls.__instance = super(cls,WifiNetworkSource).__new__(cls)
         return cls.__instance
 
     def __init__(self, args):
