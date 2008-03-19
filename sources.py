@@ -2,12 +2,14 @@ import datetime, dbus, gobject
 
 cache = {}
 
+# TODO: some sources can be single-instance (wifi), some are better created many
+# times (gconf key watcher, one per key).  Some sort of per-class factory method
+# is required.  This means changing the Rule API so that sources are constructed
+# with their arguments so that the a singleton or new instance can be created as
+# required.
+
 def getSource(name):
     global cache
-
-    # TODO: some sources can be cached (wifi), some are better created many
-    # times (gconf key watcher).  Some sort of per-class factory method is
-    # probably required.
 
     s = cache.get(name, None)
     if s:
