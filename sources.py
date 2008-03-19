@@ -6,7 +6,8 @@ def getSource(name):
     global cache
 
     # TODO: some sources can be cached (wifi), some are better created many
-    # times (gconf key watcher).
+    # times (gconf key watcher).  Some sort of per-class factory method is
+    # probably required.
 
     s = cache.get(name, None)
     if s:
