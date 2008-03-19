@@ -11,37 +11,43 @@ import datetime, gobject
 #logging.basicConfig(level=logging.DEBUG)
 
 contexts = {}
-rules = []
 # TODO: this needs to be read from a configuration file...
 
 c = Context("home")
+c.addRule(Rule("WifiNetworkSource", ssid="Burton"))
 c.addEnterAction(SpawnAction("zenity --info --text 'Mounting...'"))
 c.addLeaveAction(SpawnAction("zenity --info --text 'Unmounting...'"))
 c.addEnterAction(ScreensaverLockAction(False))
 c.addLeaveAction(ScreensaverLockAction(True))
 contexts["home"] = c
+
 contexts["daytime"] = Context("daytime")
+contexts["daytime"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
+
 contexts["office"] = Context("office")
+contexts["office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
+
 contexts["keyset"] = Context("keyset")
+contexts["keyset"].addRule(Rule("GConfSource", key="/apps/dates_window_maximized", value=True))
 
-rules.append(Rule(contexts["daytime"], "TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
-rules.append(Rule(contexts["office"], "WifiNetworkSource", ssid="OH"))
-rules.append(Rule(contexts["keyset"], "GConfSource", key="/apps/dates_window_maximized", value=True))
-rules.append(Rule(contexts["home"], "WifiNetworkSource", ssid="Burton"))
+contexts["daytime-at-office"] = Context("daytime-at-office")
+contexts["daytime-at-office"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
+contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
 
+ 
 current_contexts = set()
 
-for r in rules:
-    def rule_changed(rule):
+for c in contexts.itervalues():
+    def changed(c):
         # TODO: instead of reevaluating everything, just re-run this rule
         reevaluate()
-    r.connect("changed", rule_changed)
+    c.connect("changed", changed)
 
 # First run needs more magic.  First populate current_contexts with the contexts
 # which are active.
-for r in rules:
-    if r.evaluate():
-        current_contexts.add(r.context)
+for c in contexts.itervalues():
+    if c.evaluateRules():
+        current_contexts.add(c)
 
 # Now enter all contexts we're in, and leave all contexts we're not in.  It
 # might be a good idea to make leaving on startup an option per context.  This
@@ -58,10 +64,10 @@ for c in contexts.itervalues():
 def reevaluate():
     old_contexts = current_contexts.copy()
     current_contexts.clear()
-    for r in rules:
-        if r.evaluate():
-            current_contexts.add(r.context)
-
+    for c in contexts.itervalues():
+        if c.evaluateRules():
+            current_contexts.add(c)
+    
     # Run leave before enter
     for c in old_contexts.difference(current_contexts):
         notify.leave(c)
@@ -75,7 +81,7 @@ def poll():
     return True
 
 # Calculate the poll interval
-poll_interval = reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in rules])
+poll_interval = reduce (lambda x, y: min(x, y or x), [c.getPollInterval() for c in contexts.itervalues()])
 if poll_interval:
     gobject.timeout_add(poll_interval * 1000, poll)
 
