@@ -114,16 +114,22 @@ class GConfSource(Source):
     # TODO: have a singleton per GConf key
 
     def __init__(self, args):
+        import gconf, os
         Source.__init__(self, args)
-
+        client = gconf.client_get_default()
+        client.add_dir(os.path.dirname(args["key"]), gconf.CLIENT_PRELOAD_NONE)
+        client.notify_add(args["key"], self.key_changed)
+    
     @staticmethod
     def getProperties():
         return (("key", str), ("value", object))
     
     def getPollInterval(self):
-        # TODO: return 0 and instead get key change notifications
-        return 10
+        return 0
     
+    def key_changed(self, client, id, entry, data):
+        self.emit("changed")
+
     def evaluate(self, args):
         import gconf
         client = gconf.client_get_default()
