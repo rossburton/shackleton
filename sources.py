@@ -1,11 +1,5 @@
 import datetime, dbus, gobject
 
-# TODO: some sources can be single-instance (wifi), some are better created many
-# times (gconf key watcher, one per key).  Some sort of per-class factory method
-# is required.  This means changing the Rule API so that sources are constructed
-# with their arguments so that the a singleton or new instance can be created as
-# required.
-
 class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
