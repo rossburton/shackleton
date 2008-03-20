@@ -28,13 +28,6 @@ import datetime, gobject
 
 contexts = config.parse()
 
-#contexts["daytime"] = Context("daytime")
-#contexts["daytime"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
-
-#contexts["daytime-at-office"] = Context("daytime-at-office")
-#contexts["daytime-at-office"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
-#contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
-
 current_contexts = set()
 
 for c in contexts.itervalues():
