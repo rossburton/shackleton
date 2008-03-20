@@ -102,7 +102,7 @@ def poll():
     return True
 
 # Calculate the poll interval
-poll_interval = reduce (lambda x, y: min(x, y or x), [c.getPollInterval() for c in contexts.itervalues()])
+poll_interval = reduce (lambda x, y: min(x, y or x), [c.getPollInterval() for c in contexts.itervalues()], 0)
 if poll_interval:
     gobject.timeout_add(poll_interval * 1000, poll)
 
