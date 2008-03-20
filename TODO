@@ -8,3 +8,22 @@ Grand Plan
 2. Rewrite in C
 3. Profit!
 
+
+Step 1: Prototype In Python
+==
+
+* Implement configuration file parser (JSON?)
+* Make Wifi name source emit signals
+* Add more sources
+  - Presence of zeroconf serivce
+  - Day of week
+  - Attached device (HAL)
+  - Geoclue street address
+  - Geoclue position
+  - Active video output (xrandr)
+* Add more actions
+  - mount/umount file system
+  - Change default printer
+  - Change wallpaper
+  - Mute/unmute sound card
+  - Enable/disable a VPN (NM)
