@@ -26,6 +26,9 @@ class DebugAction(Action):
     def run(self):
         print self.s
 
+    def __str__(self):
+        return "Debug: %s" % self.s
+
 
 class SpawnAction(Action):
     def __init__(self, command):
