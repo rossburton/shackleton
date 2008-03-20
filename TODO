@@ -13,6 +13,7 @@ Step 1: Prototype In Python
 ==
 
 * Implement configuration file parser (JSON?)
+* Add basic setup.py to install
 * Make Wifi name source emit signals
 * Add more sources
   - Presence of zeroconf serivce
