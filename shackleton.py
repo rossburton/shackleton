@@ -19,42 +19,21 @@
 from actions import *
 from context import Context
 from rules import Rule
-import notify
+import config, notify
 
 import datetime, gobject
 
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
 
-contexts = {}
-# TODO: this needs to be read from a configuration file...
+contexts = config.parse()
 
-c = Context("home")
-c.addRule(Rule("WifiNetworkSource", ssid="Burton"))
-c.addEnterAction(DebugAction("Mounting..."))
-c.addLeaveAction(DebugAction("Unmounting..."))
-c.addEnterAction(ScreensaverLockAction(False))
-c.addLeaveAction(ScreensaverLockAction(True))
-contexts["home"] = c
+#contexts["daytime"] = Context("daytime")
+#contexts["daytime"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
 
-contexts["daytime"] = Context("daytime")
-contexts["daytime"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
-
-contexts["office"] = Context("office")
-contexts["office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
-
-contexts["keyset"] = Context("keyset")
-contexts["keyset"].addRule(Rule("GConfSource", key="/apps/dates_window_maximized", value=True))
-
-contexts["daytime-at-office"] = Context("daytime-at-office")
-contexts["daytime-at-office"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
-contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
-
-contexts["on-the-go"] = Context("on-the-go")
-contexts["on-the-go"].addRule(Rule("BatterySource", on_battery=True))
-contexts["on-the-go"].addEnterAction(DebugAction("On the go!"))
-contexts["on-the-go"].addLeaveAction(DebugAction("Plugged!"))
-
+#contexts["daytime-at-office"] = Context("daytime-at-office")
+#contexts["daytime-at-office"].addRule(Rule("TimeSource", time_start=datetime.time(9), time_end=datetime.time(18)))
+#contexts["daytime-at-office"].addRule(Rule("WifiNetworkSource", ssid="OH"))
 
 current_contexts = set()
 
