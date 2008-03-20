@@ -23,6 +23,7 @@ class Rule:
         for (name, expected_type) in self.source.getProperties():
             v = kwargs[name]
             if not isinstance(v, expected_type):
+                # TODO: beat the value into shape if we need to
                 raise TypeError("%s isn't a %s" % (name, expected_type))
             self.args[name] = v
 
