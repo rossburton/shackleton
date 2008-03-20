@@ -88,7 +88,7 @@ class WifiNetworkSource(Source):
     
     @staticmethod
     def getProperties():
-        return (("ssid", str),)
+        return (("ssid", basestring),)
     
     def getPollInterval(self):
         # TODO: return 0 and instead get signals from NM
@@ -135,7 +135,7 @@ class GConfSource(Source):
     
     @staticmethod
     def getProperties():
-        return (("key", str), ("value", object))
+        return (("key", basestring), ("value", object))
     
     def getPollInterval(self):
         return 0
