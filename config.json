@@ -71,13 +71,27 @@
 	]
 	},
 
-	"daytime" : {
+
+	"day" : {
 	"rules" : [
 	      {
 		"source": "TimeSource",
 		  "hour_start": 9,
 		  "minute_start": 0,
 		  "hour_end": 18,
+		  "minute_end": 0
+		}
+		]
+	},
+
+
+	"night" : {
+	"rules" : [
+	      {
+		"source": "TimeSource",
+		  "hour_start": 18,
+		  "minute_start": 0,
+		  "hour_end": 9,
 		  "minute_end": 0
 		}
 		]

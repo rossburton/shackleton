@@ -73,8 +73,11 @@ class TimeSource(Source):
         start = datetime.time(args["hour_start"], args["minute_start"])
         end = datetime.time(args["hour_end"], args["minute_end"])
         now = datetime.datetime.now().time()
-        # TODO: handle start > end
-        return start < now and now < end
+        # This may look strange, but lets us do start=18:00 end=09:00
+        if start < end:
+            return start < now and now < end
+        else:
+            return not (start < now and now < end)
 gobject.type_register(TimeSource)
 
 
