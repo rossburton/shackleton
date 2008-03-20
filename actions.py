@@ -39,7 +39,7 @@ class SpawnAction(Action):
         Popen(self.command, shell=True)
 
     def __str__(self):
-        return "Running %s" % self.command
+        return "Running %s" % self.command.split()[0]
 
 
 class GConfAction(Action):
