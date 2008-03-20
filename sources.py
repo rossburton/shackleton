@@ -146,7 +146,10 @@ class GConfSource(Source):
     def evaluate(self, args):
         import gconf
         client = gconf.client_get_default()
-        return client.get_value(args["key"]) == args["value"]
+        try:
+            return client.get_value(args["key"]) == args["value"]
+        except:
+            return False
 gobject.type_register(GConfSource)
 
 
