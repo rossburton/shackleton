@@ -62,6 +62,11 @@ class Context(gobject.GObject):
         # TODO: Provide other ways to evaluate rules with OR and AND? Let's have
         # only AND for now.  Maybe add "confidence" to the rules, which can be
         # use to implement this.
+
+        # Handle no rules specially
+        if not self.rules:
+            return False
+
         for r in self.rules:
             if not r.evaluate():
                 return False
