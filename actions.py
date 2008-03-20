@@ -20,8 +20,8 @@ class Action:
 
 
 class DebugAction(Action):
-    def __init__(self, s):
-        self.s = s
+    def __init__(self, message=None):
+        self.s = message
 
     def run(self):
         print self.s
@@ -31,7 +31,7 @@ class DebugAction(Action):
 
 
 class SpawnAction(Action):
-    def __init__(self, command):
+    def __init__(self, command=None):
         self.command = command
 
     def run(self):
@@ -57,8 +57,8 @@ class GConfAction(Action):
 
 
 class ScreensaverLockAction(GConfAction):
-    def __init__(self, lock):
-        GConfAction.__init__(self, "/apps/gnome-screensaver/lock_enabled", lock)
+    def __init__(self, locked=True):
+        GConfAction.__init__(self, "/apps/gnome-screensaver/lock_enabled", locked)
 
     def __str__(self):
         if self.value:

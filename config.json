@@ -1,0 +1,85 @@
+{
+	"home" : {
+	"rules" : [
+	      {
+		"source": "WifiNetworkSource",
+		"ssid": "Burton"
+		}
+		],
+	"enter" : [
+		{
+		"action": "DebugAction",
+		"message": "Mounting..."
+		},
+		{
+		"action": "ScreensaverLockAction",
+		"locked": false
+		}
+	],
+	"leave": [
+		{
+		"action": "DebugAction",
+		"message": "Unmounting..."
+		},
+		{
+		"action": "ScreensaverLockAction",
+		"locked": true
+		}
+		]
+	},
+
+
+	"office" : {
+	"rules" : [
+	      {
+		"source": "WifiNetworkSource",
+		"ssid": "OH"
+		}
+		]
+	},
+
+
+	"keyset" : {
+	"rules" : [
+	      {
+		"source": "GConfSource",
+		"key": "/apps/dates_window_maximized",
+		"value": true
+		}
+		]
+	},
+
+
+	"on-the-go" : {
+	"rules" : [
+	      {
+		"source": "BatterySource",
+		"on_battery": true
+		}
+		],
+	"enter" : [
+		{
+		"action": "DebugAction",
+		"message": "On the go!"
+		}
+	],
+	"leave": [
+		{
+		"action": "DebugAction",
+		"message": "Plugged!"
+		}
+	]
+	},
+
+	"daytime" : {
+	"rules" : [
+	      {
+		"source": "TimeSource",
+		  "hour_start": 9,
+		  "minute_start": 0,
+		  "hour_end": 18,
+		  "minute_end": 0
+		}
+		]
+	}
+}

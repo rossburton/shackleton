@@ -60,15 +60,21 @@ class TimeSource(Source):
 
     @staticmethod
     def getProperties():
-        return (("time_start", datetime.time), ("time_end", datetime.time))
+        return (
+            ("hour_start", int), ("minute_start", int),
+            ("hour_end", int), ("minute_end", int),
+            )
 
     def getPollInterval(self):
         # Poll every minute
         return 60
 
     def evaluate(self, args):
+        start = datetime.time(args["hour_start"], args["minute_start"])
+        end = datetime.time(args["hour_end"], args["minute_end"])
         now = datetime.datetime.now().time()
-        return args["time_start"] < now and now < args["time_end"]
+        # TODO: handle start > end
+        return start < now and now < end
 gobject.type_register(TimeSource)
 
 
@@ -88,7 +94,7 @@ class WifiNetworkSource(Source):
     
     @staticmethod
     def getProperties():
-        return (("ssid", str),)
+        return (("ssid", basestring),)
     
     def getPollInterval(self):
         # TODO: return 0 and instead get signals from NM
@@ -135,7 +141,7 @@ class GConfSource(Source):
     
     @staticmethod
     def getProperties():
-        return (("key", str), ("value", object))
+        return (("key", basestring), ("value", object))
     
     def getPollInterval(self):
         return 0
