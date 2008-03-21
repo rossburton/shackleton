@@ -1,31 +1,32 @@
 {
 	"home" : {
-	"rules" : [
-	      {
-		"source": "WifiNetworkSource",
-		"ssid": "Burton"
-		}
-		],
-	"enter" : [
+	    "rules" : [
 		{
-		"action": "DebugAction",
-		"message": "Mounting..."
+		    "source": "WifiNetworkSource",
+		    "ssid": "Burton"
+		}
+	    ],
+	    "enter" : [
+		{
+		    "action": "MountAction",
+		    "mountpoint": "/media/windows"
 		},
 		{
-		"action": "ScreensaverLockAction",
-		"locked": false
+		    "action": "ScreensaverLockAction",
+		    "locked": false
 		}
-	],
-	"leave": [
+	    ],
+	    "leave": [
 		{
-		"action": "DebugAction",
-		"message": "Unmounting..."
+		    "action": "MountAction",
+		    "mountpoint": "/media/windows",
+		    "mount": false
 		},
 		{
-		"action": "ScreensaverLockAction",
-		"locked": true
+		    "action": "ScreensaverLockAction",
+		    "locked": true
 		}
-		]
+	    ]
 	},
 
 

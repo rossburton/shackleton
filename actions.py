@@ -13,8 +13,9 @@
 # this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
 # St, Fifth Floor, Boston, MA 02110-1301 USA
 
-import dbus
-import dbus.glib
+import dbus, dbus.glib
+import os, os.path
+
 
 class Action:
     def run(self):
@@ -130,3 +131,26 @@ class BrightnessAction(Action):
 
     def __str__(self):
         return "Setting display brightness to %d" % self.level
+
+
+class MountAction(Action):
+    def __init__(self, mountpoint=None, mount=True):
+        # TODO: check mountpoint
+        # TODO: add flag to call via gtksudo
+        # TODO: use gio
+        self.mountpoint = mountpoint
+        self.mount = mount
+
+    def run(self):
+        if self.mount:
+            os.system("mount %s" % self.mountpoint)
+        else:
+            if os.path.ismount(self.mountpoint):
+                os.system("umount %s" % self.mountpoint)
+
+    def __str__(self):
+        if self.mount:
+            return "Mounting %s" % self.mountpoint
+        else:
+            return "Unmounting %s" % self.mountpoint
+
