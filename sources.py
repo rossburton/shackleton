@@ -75,9 +75,11 @@ class TimeSource(Source):
         now = datetime.datetime.now().time()
         # This may look strange, but lets us do start=18:00 end=09:00
         if start < end:
-            return start < now and now < end
+            # Normal inclusive time slices
+            return start < now < end
         else:
-            return not (start < now and now < end)
+            # Exclusive time slices
+            return now < end or now > start
 gobject.type_register(TimeSource)
 
 
