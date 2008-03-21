@@ -24,6 +24,7 @@ Step 1: Prototype In Python
 * Add more actions
   - mount/umount file system
   - Change default printer
-  - Change wallpaper
   - Mute/unmute sound card
   - Enable/disable a VPN (NM)
+  - Set presence on instant messenger
+  - Set display brightness
