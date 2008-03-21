@@ -19,7 +19,7 @@ import os, os.path
 
 class Action:
     def run(self):
-        pass
+        raise NotImplementedError
 
 
 class DebugAction(Action):
