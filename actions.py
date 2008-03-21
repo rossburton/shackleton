@@ -13,6 +13,8 @@
 # this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
 # St, Fifth Floor, Boston, MA 02110-1301 USA
 
+import dbus
+import dbus.glib
 
 class Action:
     def run(self):
@@ -100,3 +102,28 @@ class GossipStatusAction(Action):
     
     def __str__(self):
         return "Setting presence"
+
+
+class BrightnessAction(Action):
+    def __init__(self, level=256):
+        self.level = level
+
+        self.bus = dbus.SystemBus()
+
+        self.hal_obj = self.bus.get_object('org.freedesktop.Hal', '/org/freedesktop/Hal/Manager')
+        self.hal = dbus.Interface(self.hal_obj, 'org.freedesktop.Hal.Manager')
+
+        udis = self.hal.FindDeviceByCapability('laptop_panel')
+
+        self.dev = None
+
+        if (len(udis) > 0):
+            self.dev_obj = self.bus.get_object('org.freedesktop.Hal', udis[0])
+            self.dev = dbus.Interface(self.dev_obj, 'org.freedesktop.Hal.Device.LaptopPanel')
+ 
+    def run(self):
+        if self.dev:
+            self.dev.SetBrightness(self.level)
+
+    def __str__(self):
+        return "Setting display brightness to %d" % self.level
