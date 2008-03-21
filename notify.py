@@ -18,6 +18,11 @@ import pynotify
 
 pynotify.init("Shackleton")
 
+# TODO
+# - add icon
+# - set type
+# - reduce timeout
+
 def enter(context):
     l = ["<b>Entering %s context</b>" % context]
     # TODO: escape the strings
@@ -31,3 +36,4 @@ def leave(context):
     l += [str(a) for a in context.leaving_actions]
     details = "\n\342\200\242 ".join(l)
     pynotify.Notification("Changing Context", details).show()
+
