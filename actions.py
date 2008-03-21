@@ -105,22 +105,25 @@ class GossipStatusAction(Action):
 
 
 class BrightnessAction(Action):
-    def __init__(self, level=256):
+    def __init__(self, level=100):
+        """Level should be between 0 and 100."""
+        
         self.level = level
 
-        self.bus = dbus.SystemBus()
+        bus = dbus.SystemBus()
 
-        self.hal_obj = self.bus.get_object('org.freedesktop.Hal', '/org/freedesktop/Hal/Manager')
-        self.hal = dbus.Interface(self.hal_obj, 'org.freedesktop.Hal.Manager')
+        hal_obj = bus.get_object('org.freedesktop.Hal', '/org/freedesktop/Hal/Manager')
+        hal = dbus.Interface(hal_obj, 'org.freedesktop.Hal.Manager')
 
-        udis = self.hal.FindDeviceByCapability('laptop_panel')
-
-        self.dev = None
+        udis = hal.FindDeviceByCapability('laptop_panel')
 
         if (len(udis) > 0):
-            self.dev_obj = self.bus.get_object('org.freedesktop.Hal', udis[0])
-            self.dev = dbus.Interface(self.dev_obj, 'org.freedesktop.Hal.Device.LaptopPanel')
- 
+            # TODO: adjust brightness of all panels?
+            dev_obj = bus.get_object('org.freedesktop.Hal', udis[0])
+            self.dev = dbus.Interface(dev_obj, 'org.freedesktop.Hal.Device.LaptopPanel')
+        else:
+            self.dev = None
+
     def run(self):
         if self.dev:
             self.dev.SetBrightness(self.level)
