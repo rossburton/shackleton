@@ -65,3 +65,18 @@ class ScreensaverLockAction(GConfAction):
             return "Enabling screensaver lock"
         else:
             return "Disabling screensaver lock"
+
+class WallpaperAction(Action):
+    def __init__(self, image, mode="zoom"):
+        self.image = image.encode()
+        # Mode can be 'wallpaper', 'centered', 'scaled', and 'zoom'  
+        self.mode = mode.encode()
+
+    def run(self):
+        import gconf
+        client = gconf.client_get_default()
+        client.set_value("/desktop/gnome/background/picture_filename", self.image)
+        client.set_value("/desktop/gnome/background/picture_options", self.mode)
+
+    def __str__(self):
+        return "Setting Wallpaper"
