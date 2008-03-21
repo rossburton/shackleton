@@ -30,12 +30,19 @@
 
 
 	"office" : {
-	"rules" : [
-	      {
-		"source": "WifiNetworkSource",
-		"ssid": "OH"
+	    "rules" : [
+		{
+		    "source": "WifiNetworkSource",
+		    "ssid": "OH"
 		}
-		]
+	    ],
+	    "enter": [
+		{
+		    "action": "GossipStatusAction",
+		    "state": "busy",
+		    "status": "Working"
+		}
+	    ]
 	},
 
 

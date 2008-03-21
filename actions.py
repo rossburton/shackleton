@@ -66,6 +66,7 @@ class ScreensaverLockAction(GConfAction):
         else:
             return "Disabling screensaver lock"
 
+
 class WallpaperAction(Action):
     def __init__(self, image, mode="zoom"):
         self.image = image.encode()
@@ -80,3 +81,22 @@ class WallpaperAction(Action):
 
     def __str__(self):
         return "Setting Wallpaper"
+
+
+class GossipStatusAction(Action):
+    def __init__(self, state="available", status="Available"):
+        if state not in ('available', 'busy', 'away', 'xa'):
+            raise KeyError("Invalid state ('available', 'busy', 'away', 'xa')")
+
+        self.state = state
+        self.status = status
+
+    def run(self):
+        import dbus
+        bus = dbus.SessionBus()
+        gossip = bus.get_object("org.gnome.Gossip", "/org/gnome/Gossip")
+        if gossip:
+            gossip.SetPresence(self.state, self.status)
+    
+    def __str__(self):
+        return "Setting presence"
