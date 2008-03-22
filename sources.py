@@ -194,3 +194,53 @@ class BatterySource(Source):
         on_battery = self.pm.GetOnBattery()
         return on_battery == args["on_battery"]
 gobject.type_register(BatterySource)
+
+
+class VolumeDeviceSource(Source):
+    """Matches the 'info.product' HAL property for a volume device, if you are
+       unsure of the correct value, check 
+       System->Preferences->Hardware Information, select your device on the left
+       and switch to the advanced tab on the right. Locate the info.product key,
+       the use the corressponding value."""
+
+    def __init__(self, args):
+        Source.__init__(self, args)
+        self.bus = dbus.SystemBus()
+        hal_obj = self.bus.get_object("org.freedesktop.Hal", 
+                                     "/org/freedesktop/Hal/Manager")
+        self.hal_iface = dbus.Interface(hal_obj,
+                                       "org.freedesktop.Hal.Manager")
+        self.hal_iface.connect_to_signal("DeviceAdded", self.list_changed)
+        self.hal_iface.connect_to_signal("DeviceRemoved", self.list_changed)
+        self.device_name = args["device_name"]
+        self.connected = self.check_connected_devices(self.device_name)
+
+    @staticmethod
+    def getProperties():
+        return (("device_name", basestring),)
+    
+    def getPollInterval(self):
+        return 0
+
+    def evaluate(self, args):
+        return self.connected
+
+    def check_connected_devices(self, device_name):
+        device_list = self.hal_iface.FindDeviceByCapability("volume")
+        
+        for udi in device_list:
+            volume = self.bus.get_object("org.freedesktop.Hal", udi)
+            try:
+                name = volume.GetProperty("info.product", 
+                                   dbus_interface="org.freedesktop.Hal.Device")
+                if name == device_name:
+                    return True 
+            except:
+                pass
+        return False
+
+    def list_changed(self, *args):
+        # Will check the list & set self.connected, so we don't need to poll
+        self.connected = self.check_connected_devices(self.device_name)
+        self.emit("changed")
+gobject.type_register(VolumeDeviceSource) 
