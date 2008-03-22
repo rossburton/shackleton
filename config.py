@@ -1,8 +1,16 @@
+import os
 import simplejson
 
 import actions
 from context import Context
 from rules import Rule
+
+def __getConfigFilename ():
+    configdir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config/"))
+    filename = os.path.join(configdir, "shackleton", "config.json")
+    if not os.path.exists(filename):
+        filename = "config.json"
+    return filename
 
 def __stringise(d):
     new_d = {}
@@ -12,8 +20,9 @@ def __stringise(d):
 
 def parse():
     result = {}
+    filename = __getConfigFilename()
 
-    for (context_name, context_data) in simplejson.load(open("config.json")).iteritems():
+    for (context_name, context_data) in simplejson.load(open(filename)).iteritems():
         context = Context(context_name)
         result[context_name] = context
 
