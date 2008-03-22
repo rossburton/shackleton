@@ -3,7 +3,7 @@
 	    "rules" : [
 		{
 		    "source": "WifiNetworkSource",
-		    "ssid": "Burton"
+		    "ssid": ["Burton"]
 		}
 	    ],
 	    "enter" : [
@@ -34,7 +34,7 @@
 	    "rules" : [
 		{
 		    "source": "WifiNetworkSource",
-		    "ssid": "OH"
+		    "ssid": ["OH"]
 		}
 	    ],
 	    "enter": [

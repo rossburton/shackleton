@@ -99,7 +99,7 @@ class WifiNetworkSource(Source):
     
     @staticmethod
     def getProperties():
-        return (("ssid", basestring),)
+        return (("ssid", list),)
     
     def getPollInterval(self):
         # TODO: return 0 and instead get signals from NM
@@ -128,7 +128,7 @@ class WifiNetworkSource(Source):
                 continue
             network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
             ssid = network.getProperties()[1]
-            if ssid == args["ssid"]:
+            if ssid in args["ssid"]:
                 return True
         return False
 gobject.type_register(WifiNetworkSource)
