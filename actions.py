@@ -72,9 +72,11 @@ class ScreensaverLockAction(GConfAction):
 
 class WallpaperAction(Action):
     def __init__(self, image, mode="zoom"):
-        self.image = image.encode()
-        # Mode can be 'wallpaper', 'centered', 'scaled', and 'zoom'  
+        if mode not in ('wallpaper', 'centered', 'scaled', 'zoom'):
+            raise KeyError("Invalid mode ('wallpaper', 'centered', 'scaled', 'zoom')")
+
         self.mode = mode.encode()
+        self.image = image.encode()
 
     def run(self):
         import gconf
