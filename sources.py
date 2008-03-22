@@ -244,3 +244,47 @@ class VolumeDeviceSource(Source):
         self.connected = self.check_connected_devices(self.device_name)
         self.emit("changed")
 gobject.type_register(VolumeDeviceSource) 
+
+
+class AvahiSource(Source):
+    def __init__(self, args):
+        import avahi
+        Source.__init__(self, args)
+
+        self.name = args["name"]
+        self.present = False
+        
+        bus = dbus.SystemBus()
+        
+        server = dbus.Interface(bus.get_object(avahi.DBUS_NAME, avahi.DBUS_PATH_SERVER),
+                                avahi.DBUS_INTERFACE_SERVER)
+
+        browser = dbus.Interface(bus.get_object(avahi.DBUS_NAME,
+                                                server.ServiceBrowserNew(avahi.IF_UNSPEC, avahi.PROTO_UNSPEC,
+                                                                         args["service_type"], "local", dbus.UInt32(0))),
+                                 avahi.DBUS_INTERFACE_SERVICE_BROWSER)
+
+        browser.connect_to_signal('ItemNew', self.service_new)
+        browser.connect_to_signal('ItemRemove', self.service_removed)
+    
+    @staticmethod
+    def getProperties():
+        return (("service_type", basestring),
+                ("name", basestring))
+    
+    def getPollInterval(self):
+        return 0
+
+    def service_new(self, interface, protocol, name, stype, domain, flags):
+        if name == self.name:
+            self.present = True
+            self.emit("changed")
+    
+    def service_removed(self, interface, protocol, name, stype, domain, flags):
+        if name == self.name:
+            self.present = False
+            self.emit("changed")
+    
+    def evaluate(self, args):
+        return self.present
+gobject.type_register(AvahiSource)

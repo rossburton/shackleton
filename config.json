@@ -103,5 +103,16 @@
 		  "minute_end": 0
 		}
 		]
+	},
+
+
+	"nas-present" : {
+	    "rules" : [
+		{
+		    "source": "AvahiSource",
+		    "service_type": "_workstation._tcp",
+		    "name": "redbeard [00:13:d3:6e:84:ee]"
+		}
+	    ]
 	}
 }
