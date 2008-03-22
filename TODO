@@ -26,3 +26,5 @@ Step 1: Prototype In Python
   - Mute/unmute sound card
   - Enable/disable a VPN (NM)
   - Set presence in Telepathy
+* Remove polling in main loop and instead add a PollAction class which uses
+  timeouts to emit signals
