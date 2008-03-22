@@ -22,6 +22,8 @@ pynotify.init("Shackleton")
 # - add icon
 # - set type
 # - reduce timeout
+# - cache context notifications until they are hidden, so enter/leave is one
+#   notification
 
 def enter(context):
     l = ["<b>Entering %s context</b>" % context]
