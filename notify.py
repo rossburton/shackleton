@@ -30,12 +30,17 @@ def enter(context):
     # TODO: escape the strings
     l += [str(a) for a in context.entering_actions]
     details = "\n\342\200\242 ".join(l)
-    pynotify.Notification("Changing Context", details).show()
+    n = pynotify.Notification("Changing Context", details)
+    n.set_urgency(0)
+    n.set_timeout(5 * 1000)
+    n.show()
 
 def leave(context):
     l = ["<b>Leaving %s context</b>" % context]
     # TODO: escape the strings
     l += [str(a) for a in context.leaving_actions]
     details = "\n\342\200\242 ".join(l)
-    pynotify.Notification("Changing Context", details).show()
-
+    n = pynotify.Notification("Changing Context", details)
+    n.set_urgency(0)
+    n.set_timeout(5 * 1000)
+    n.show()
