@@ -56,6 +56,7 @@ class TimeSource(Source):
         return cls.__instance
 
     def __init__(self, args):
+        # TODO: this gets called more than once, should be in __new__?
         Source.__init__(self, args)
 
     @staticmethod
@@ -154,6 +155,7 @@ class GConfSource(Source):
         return cls.__instances[key]
     
     def __init__(self, args):
+        # TODO: this gets called more than once, should be in __new__?
         import gconf, os
         Source.__init__(self, args)
         client = gconf.client_get_default()
@@ -190,6 +192,7 @@ class BatterySource(Source):
         return cls.__instance
 
     def __init__(self, args):
+        # TODO: this gets called more than once, should be in __new__?
         Source.__init__(self, args)
         self.bus = dbus.SessionBus()
         self.pm = self.bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
