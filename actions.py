@@ -145,7 +145,8 @@ class MountAction(Action):
 
     def run(self):
         if self.mount:
-            os.system("mount %s" % self.mountpoint)
+            if not os.path.ismount(self.mountpoint):
+                os.system("mount %s" % self.mountpoint)
         else:
             if os.path.ismount(self.mountpoint):
                 os.system("umount %s" % self.mountpoint)
