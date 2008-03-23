@@ -5,10 +5,6 @@ import actions
 from context import Context
 from rules import Rule
 
-def __getConfigFilename ():
-    configdir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config/"))
-    return os.path.join(configdir, "shackleton", "config.json")
-
 def __stringise(d):
     new_d = {}
     for k in d.iterkeys():
@@ -17,7 +13,8 @@ def __stringise(d):
 
 def parse(filename):
     if filename is None:
-        filename = __getConfigFilename()
+        configdir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config/"))
+        filename = os.path.join(configdir, "shackleton", "config.json")
     
     if not os.path.exists(filename):
         raise IOError("File %s not found" % filename)
@@ -50,4 +47,5 @@ def parse(filename):
 
 
 if __name__ == "__main__":
-    print parse()
+    import sys
+    print parse(sys.argv[1])
