@@ -25,7 +25,7 @@ import gobject
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="enable debugging")
+parser.add_option("-d", "--debug", action="store_true", default=False, help="enable debugging")
 (options, args) = parser.parse_args()
 
 if options.debug:
