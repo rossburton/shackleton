@@ -182,18 +182,16 @@ gobject.type_register(GConfSource)
 class BatterySource(Source):
 
     __instance = None
-    def __new__(cls,somearg):
+    def __new__(cls, args):
         # Make this a singleton
         if not cls.__instance:
-            cls.__instance = super(cls,BatterySource).__new__(cls)
+            s = super(cls, BatterySource).__new__(cls)
+            Source.__init__(s, args)
+            bus = dbus.SessionBus()
+            s.pm = bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
+            s.pm.connect_to_signal("OnBatteryChanged", s.changed)
+            cls.__instance = s
         return cls.__instance
-
-    def __init__(self, args):
-        # TODO: this gets called more than once, should be in __new__?
-        Source.__init__(self, args)
-        self.bus = dbus.SessionBus()
-        self.pm = self.bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
-        self.pm.connect_to_signal("OnBatteryChanged", self.changed)
 
     @staticmethod
     def getProperties():
