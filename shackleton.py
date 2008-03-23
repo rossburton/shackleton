@@ -16,12 +16,9 @@
 # St, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-from actions import *
-from context import Context
-from rules import Rule
 import config, notify
 
-import gobject
+import gobject, logging
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -30,7 +27,6 @@ parser.add_option("-c", "--config", default=None, help="configuration file to re
 (options, args) = parser.parse_args()
 
 if options.debug:
-    import logging
     logging.basicConfig(level=logging.DEBUG)
 
 contexts = config.parse(options.config)
