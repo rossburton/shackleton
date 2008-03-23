@@ -21,6 +21,8 @@ import config, notify
 import gobject, logging
 from optparse import OptionParser
 
+logger = logging.getLogger("shackleton")
+
 parser = OptionParser()
 parser.add_option("-d", "--debug", action="store_true", default=False, help="enable debugging")
 parser.add_option("-c", "--config", default=None, help="configuration file to read")
@@ -34,7 +36,8 @@ contexts = config.parse(options.config)
 current_contexts = set()
 
 for c in contexts.itervalues():
-    def changed(c):
+    def changed(context):
+        logger.debug("Context %s changed" % context)
         # TODO: instead of reevaluating everything, just re-run this rule
         reevaluate()
     c.connect("changed", changed)
@@ -73,12 +76,18 @@ def reevaluate():
         c.runEnteringActions()
 
 def poll():
+    logger.debug("Polling for changes")
     reevaluate()
     return True
 
 # Calculate the poll interval
-poll_interval = reduce (lambda x, y: min(x, y or x), [c.getPollInterval() for c in contexts.itervalues()], 0)
-if poll_interval:
-    gobject.timeout_add(poll_interval * 1000, poll)
+intervals = [c.getPollInterval() for c in contexts.itervalues() if c.getPollInterval()]
+if intervals:
+    poll_interval = min(intervals)
+    logger.debug("Polling for changes every %d seconds" % poll_interval)
+    if gobject.timeout_add_seconds:
+        gobject.timeout_add_seconds(poll_interval, poll)
+    else:
+        gobject.timeout_add(poll_interval * 1000, poll)
 
 gobject.MainLoop().run()

@@ -73,7 +73,11 @@ class Context(gobject.GObject):
         return True 
 
     def getPollInterval(self):
-        return reduce (lambda x, y: min(x, y or x), [r.source.getPollInterval() for r in self.rules], 0)
+        intervals = [r.source.getPollInterval() for r in self.rules if r.source.getPollInterval()]
+        if intervals:
+            return min(intervals)
+        else:
+            return 0
 
     def __str__(self):
         return self.name
