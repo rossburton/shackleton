@@ -87,6 +87,9 @@ gobject.type_register(TimeSource)
 
 class WifiNetworkSource(Source):
 
+    NM_STATE_CONNECTED = 3
+    NM_DEVICE_TYPE_802_11_WIRELESS = 2
+    
     __instance = None
     def __new__(cls,somearg):
         # Make this a singleton
@@ -110,30 +113,34 @@ class WifiNetworkSource(Source):
     def evaluate(self, args):
         # TODO: this doesn't quite work because it returns true for interfaces
         # which are still configuring
+        state = self.nm.state()
+        if state != self.NM_STATE_CONNECTED:
+            print "not connected"
+            return False
+        
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
-            # TODO: I guess this is covered by the props[5] test
-            if not device.getLinkActive():
+            props = device.getProperties()
+            
+            if props[2] != self.NM_DEVICE_TYPE_802_11_WIRELESS:
+                # Device type is not wireless
                 continue
             
-            props = device.getProperties()
             if not props[5]:
                 # This device isn't active yet
-                continue
-            
-            if props[2] != 2:
-                # Device type is not wireless
                 continue
             
             network_path = props[19]
             if not network_path:
                 # No active network
                 continue
+            
             network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
             ssid = network.getProperties()[1]
             if ssid in args["ssid"]:
                 return True
+        
         return False
 gobject.type_register(WifiNetworkSource)
 
