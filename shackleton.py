@@ -38,8 +38,16 @@ current_contexts = set()
 for c in contexts.itervalues():
     def changed(context):
         logger.debug("Context %s changed" % context)
-        # TODO: instead of reevaluating everything, just re-run this rule
-        reevaluate()
+        if context.evaluateRules():
+            if context not in current_contexts:
+                current_contexts.add(context)
+                notify.enter(context)
+                context.runEnteringActions()
+        else:
+            if context in current_contexts:
+                current_contexts.remove(context)
+                notify.leave(context)
+                context.runLeavingActions()
     c.connect("changed", changed)
 
 # First run needs more magic.  First populate current_contexts with the contexts
