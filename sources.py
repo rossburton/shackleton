@@ -49,16 +49,13 @@ gobject.type_register(Source)
 class TimeSource(Source):
 
     __instance = None
-    def __new__(cls,somearg):
+    def __new__(cls, args):
         # Make this a singleton
         if not cls.__instance:
             cls.__instance = super(cls,TimeSource).__new__(cls)
+            Source.__init__(cls.__instance, args)
         return cls.__instance
-
-    def __init__(self, args):
-        # TODO: this gets called more than once, should be in __new__?
-        Source.__init__(self, args)
-
+    
     @staticmethod
     def getProperties():
         return (
@@ -151,16 +148,16 @@ class GConfSource(Source):
         # Have an instance per GConf key
         key = args["key"]
         if key not in cls.__instances:
-            cls.__instances[key] = super(cls, GConfSource).__new__(cls)
+            import gconf, os
+            s = super(cls, GConfSource).__new__(cls)
+
+            Source.__init__(s, args)
+            client = gconf.client_get_default()
+            client.add_dir(os.path.dirname(args["key"]), gconf.CLIENT_PRELOAD_NONE)
+            client.notify_add(args["key"], s.key_changed)
+
+            cls.__instances[key] = s
         return cls.__instances[key]
-    
-    def __init__(self, args):
-        # TODO: this gets called more than once, should be in __new__?
-        import gconf, os
-        Source.__init__(self, args)
-        client = gconf.client_get_default()
-        client.add_dir(os.path.dirname(args["key"]), gconf.CLIENT_PRELOAD_NONE)
-        client.notify_add(args["key"], self.key_changed)
     
     @staticmethod
     def getProperties():
