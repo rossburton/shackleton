@@ -288,3 +288,70 @@ class AvahiSource(Source):
     def evaluate(self, args):
         return self.present
 gobject.type_register(AvahiSource)
+
+class BluetoothDeviceSource(Source):
+    def __init__(self, args):
+        Source.__init__(self, args)
+        bus = dbus.SystemBus()
+
+        try:
+            # Grab the main bluez.Manager to find the default adapter
+            obj = bus.get_object("org.bluez", "/org/bluez")
+            self.manager = dbus.Interface(obj, "org.bluez.Manager")
+            # Get the default adapter
+            obj = bus.get_object("org.bluez", self.manager.DefaultAdapter())
+            self.adapter = dbus.Interface(obj, "org.bluez.Adapter")
+            self.adapter.connect_to_signal("DiscoveryStarted", 
+                                           self.searchStarted)
+            self.adapter.connect_to_signal("DiscoveryCompleted", 
+                                           self.searchFinished)
+            self.adapter.connect_to_signal("RemoteDeviceFound", 
+                                           self.deviceFound)
+            #set up the basic properties
+            self.device_address = args["address"]
+            self.connected = False
+            self.device_list = []
+            self.dirty = False
+            self.no_connection = False
+        except:
+            self.no_connection = True
+
+    @staticmethod
+    def getProperties():
+        return (("address", basestring),)
+    
+    def getPollInterval(self):
+        if self.no_connection:
+          return 0
+        return 900 # Every 15 mins for now
+
+    def evaluate(self, args):
+        if self.no_connection:
+          return False
+        elif (self.dirty):
+            self.dirty = False
+            return self.connected
+        else:
+          self.checkConnectedDevices()
+          return self.connected
+
+    def checkConnectedDevices(self):
+        self.adapter.DiscoverDevices() 
+
+    def searchStarted(self):
+        self.device_list = []
+
+    def searchFinished(self):
+        connected = False
+        for address in self.device_list:
+            if address == self.device_address:
+                connected = True
+                break
+        if not connected == self.connected:
+            self.connected = connected
+            self.dirty = True
+            self.emit("changed")
+
+    def deviceFound(self, address, device_class, rssi):
+        self.device_list.append(address)
+gobject.type_register(BluetoothDeviceSource) 
