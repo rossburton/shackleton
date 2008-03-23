@@ -21,6 +21,9 @@ import config, notify
 import gobject, logging
 from optparse import OptionParser
 
+from dbus.mainloop.glib import DBusGMainLoop
+DBusGMainLoop(set_as_default=True)
+
 logger = logging.getLogger("shackleton")
 
 parser = OptionParser()
