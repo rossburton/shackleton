@@ -139,8 +139,14 @@ gobject.type_register(WifiNetworkSource)
 
 
 class GConfSource(Source):
-    # TODO: have a singleton per GConf key
-
+    __instances = {}
+    def __new__(cls, args):
+        # Have an instance per GConf key
+        key = args["key"]
+        if key not in cls.__instances:
+            cls.__instances[key] = super(cls, GConfSource).__new__(cls)
+        return cls.__instances[key]
+    
     def __init__(self, args):
         import gconf, os
         Source.__init__(self, args)
