@@ -106,6 +106,8 @@ class WifiNetworkSource(Source):
         return 10
     
     def evaluate(self, args):
+        # TODO: this doesn't quite work because it returns true for interfaces
+        # which are still configuring
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
@@ -288,6 +290,7 @@ class AvahiSource(Source):
     def evaluate(self, args):
         return self.present
 gobject.type_register(AvahiSource)
+
 
 class BluetoothDeviceSource(Source):
     def __init__(self, args):
