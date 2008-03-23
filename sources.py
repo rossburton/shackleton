@@ -67,6 +67,8 @@ class TimeSource(Source):
 
     def getPollInterval(self):
         # Poll every minute
+        # TODO: don't be a singleton and instead schedule a queue of wakeups and
+        # emit signals.
         return 60
 
     def evaluate(self, args):
