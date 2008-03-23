@@ -7,10 +7,7 @@ from rules import Rule
 
 def __getConfigFilename ():
     configdir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config/"))
-    filename = os.path.join(configdir, "shackleton", "config.json")
-    if not os.path.exists(filename):
-        filename = "config.json"
-    return filename
+    return os.path.join(configdir, "shackleton", "config.json")
 
 def __stringise(d):
     new_d = {}
@@ -18,9 +15,14 @@ def __stringise(d):
         new_d[str(k)] = d[k]
     return new_d
 
-def parse():
+def parse(filename):
+    if filename is None:
+        filename = __getConfigFilename()
+    
+    if not os.path.exists(filename):
+        raise IOError("File %s not found" % filename)
+
     result = {}
-    filename = __getConfigFilename()
 
     for (context_name, context_data) in simplejson.load(open(filename)).iteritems():
         context = Context(context_name)

@@ -26,13 +26,14 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-d", "--debug", action="store_true", default=False, help="enable debugging")
+parser.add_option("-c", "--config", default=None, help="configuration file to read")
 (options, args) = parser.parse_args()
 
 if options.debug:
     import logging
     logging.basicConfig(level=logging.DEBUG)
 
-contexts = config.parse()
+contexts = config.parse(options.config)
 
 current_contexts = set()
 
