@@ -21,10 +21,16 @@ from context import Context
 from rules import Rule
 import config, notify
 
-import datetime, gobject
+import gobject
+from optparse import OptionParser
 
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
+parser = OptionParser()
+parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="enable debugging")
+(options, args) = parser.parse_args()
+
+if options.debug:
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
 
 contexts = config.parse()
 
