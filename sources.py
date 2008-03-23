@@ -86,36 +86,35 @@ gobject.type_register(TimeSource)
 
 
 class WifiNetworkSource(Source):
-
     NM_STATE_CONNECTED = 3
+    NM_STATE_DISCONNECTED = 4
     NM_DEVICE_TYPE_802_11_WIRELESS = 2
     
     __instance = None
-    def __new__(cls,somearg):
+    def __new__(cls, args):
         # Make this a singleton
         if not cls.__instance:
-            cls.__instance = super(cls,WifiNetworkSource).__new__(cls)
+            s = super(cls,WifiNetworkSource).__new__(cls)
+            Source.__init__(s, args)
+            s.bus = dbus.SystemBus()
+            s.nm = s.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
+            s.nm.connect_to_signal("StateChange", s.state_changed)
+            cls.__instance = s
         return cls.__instance
-
-    def __init__(self, args):
-        Source.__init__(self, args)
-        self.bus = dbus.SystemBus()
-        self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
     
     @staticmethod
     def getProperties():
         return (("ssid", list),)
     
     def getPollInterval(self):
-        # TODO: return 0 and instead get signals from NM
-        return 10
+        return 0
+
+    def state_changed(self, state):
+        self.emit("changed")
     
     def evaluate(self, args):
-        # TODO: this doesn't quite work because it returns true for interfaces
-        # which are still configuring
         state = self.nm.state()
         if state != self.NM_STATE_CONNECTED:
-            print "not connected"
             return False
         
         devices = self.nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')

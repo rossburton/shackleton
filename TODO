@@ -13,7 +13,6 @@ Step 1: Prototype In Python
 ==
 
 * Add basic setup.py to install
-* Make Wifi name source emit signals
 * Add more sources
   - Day of week
   - Attached device (HAL)
