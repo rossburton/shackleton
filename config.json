@@ -114,5 +114,14 @@
 		    "name": "redbeard [00:13:d3:6e:84:ee]"
 		}
 	    ]
+	},
+
+	"cardreader-present" : {
+	    "rules" : [
+		{
+		    "source": "DeviceSource",
+		    "udi": "/org/freedesktop/Hal/devices/usb_device_dda_2026_0000001"
+		}
+	    ]
 	}
 }
