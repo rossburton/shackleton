@@ -367,3 +367,61 @@ class BluetoothDeviceSource(Source):
     def deviceFound(self, address, device_class, rssi):
         self.device_list.append(address)
 gobject.type_register(BluetoothDeviceSource) 
+
+
+class DeviceSource(Source):
+    """Matches the HAL UDI for a device"""
+
+    def __init__(self, args):
+        Source.__init__(self, args)
+        self.udi = args["udi"]
+
+        self.bus = dbus.SystemBus()
+        hal_obj = self.bus.get_object("org.freedesktop.Hal", 
+                                     "/org/freedesktop/Hal/Manager")
+        self.hal_iface = dbus.Interface(hal_obj,
+                                       "org.freedesktop.Hal.Manager")
+        self.hal_iface.connect_to_signal("DeviceAdded", self.device_added, arg0=self.udi)
+        self.hal_iface.connect_to_signal("DeviceRemoved", self.device_removed, arg0=self.udi)
+        
+        try:
+            self.present = self.hal_iface.DeviceExists(self.udi)
+        except Exception, e:
+            # Stupid HAL, see https://bugs.freedesktop.org/17082
+            print e
+            self.present = False
+
+    @staticmethod
+    def getProperties():
+        return (("udi", basestring),)
+    
+    def getPollInterval(self):
+        return 0
+
+    def evaluate(self, args):
+        return self.present
+
+    def check_present(self, device_name):
+        device_list = self.hal_iface.FindDeviceByCapability("volume")
+        
+        for udi in device_list:
+            volume = self.bus.get_object("org.freedesktop.Hal", udi)
+            try:
+                name = volume.GetProperty("info.product", 
+                                   dbus_interface="org.freedesktop.Hal.Device")
+                if name == device_name:
+                    return True 
+            except:
+                pass
+        return False
+
+    def device_added(self, udi):
+        if udi == self.udi:
+            self.present = True
+            self.emit("changed")
+
+    def device_removed(self, udi):
+        if udi == self.udi:
+            self.present = False
+            self.emit("changed")
+gobject.type_register(DeviceSource)
