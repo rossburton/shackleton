@@ -136,18 +136,17 @@ class BrightnessAction(Action):
 class MountAction(Action):
     def __init__(self, mountpoint=None, mount=True):
         # TODO: check mountpoint
-        # TODO: add flag to call via gtksudo
-        # TODO: use gio
+        # TODO: add flag to call via gtksudo? gio? policykit?
         self.mountpoint = mountpoint
         self.mount = mount
 
     def run(self):
         if self.mount:
             if not os.path.ismount(self.mountpoint):
-                os.system("mount %s" % self.mountpoint)
+                subprocess.check_call(["mount", self.mountpoint])
         else:
             if os.path.ismount(self.mountpoint):
-                os.system("umount %s" % self.mountpoint)
+                subprocess.check_call(["umount", self.mountpoint])
 
     def __str__(self):
         if self.mount:
