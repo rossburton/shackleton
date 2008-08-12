@@ -41,6 +41,7 @@ current_contexts = set()
 for c in contexts.itervalues():
     def changed(context):
         logger.debug("Context %s changed" % context)
+        # TODO: wrap in try/except
         if context.evaluateRules():
             if context not in current_contexts:
                 current_contexts.add(context)
@@ -62,6 +63,7 @@ for c in contexts.itervalues():
 # Now enter all contexts we're in, and leave all contexts we're not in.  It
 # might be a good idea to make leaving on startup an option per context.  This
 # has to be done in two loops so that we leave before entering.
+# TODO: wrap in try/except
 for c in contexts.itervalues():
     if c not in current_contexts:
         c.runLeavingActions()
