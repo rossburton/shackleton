@@ -17,9 +17,8 @@ Step 1: Prototype In Python
   - Day of week
   - Geoclue street address
   - Geoclue position
-  - Active video output (xrandr)
+  - Active video output (blocking on xrandr event notification, should be in xserver 1.5)
 * Add more actions
-  - Change default printer
   - Mute/unmute sound card
   - Enable/disable a VPN (NM)
   - Set presence in Telepathy

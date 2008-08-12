@@ -14,7 +14,7 @@
 # St, Fifth Floor, Boston, MA 02110-1301 USA
 
 import dbus, dbus.glib
-import os, os.path
+import os, os.path, subprocess
 
 
 class Action:
@@ -157,3 +157,16 @@ class MountAction(Action):
         else:
             return "Unmounting %s" % self.mountpoint
 
+
+
+class DefaultPrinter(Action):
+    def __init__(self, name):
+        if name is None:
+            raise KeyError("No default printer name specified")
+        self.name = name
+    
+    def run(self):
+        subprocess.check_call(["lpoptions", "-d", self.name])
+    
+    def __str__(self):
+        return "Setting \"%s\" as the default printer" % self.name
