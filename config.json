@@ -9,7 +9,7 @@
 	    "enter" : [
 		{
 		    "action": "MountAction",
-		    "mountpoint": "/media/windows"
+		    "mountpoint": "/media/home"
 		},
 		{
 		    "action": "ScreensaverLockAction",
@@ -19,7 +19,7 @@
 	    "leave": [
 		{
 		    "action": "MountAction",
-		    "mountpoint": "/media/windows",
+		    "mountpoint": "/media/home",
 		    "mount": false
 		},
 		{
