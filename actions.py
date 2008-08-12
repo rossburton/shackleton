@@ -140,9 +140,13 @@ class MountAction(Action):
 
     def run(self):
         if self.mount:
+            # TODO: this test doesn't work for some reason which I discovered
+            # before but have now forgotten.
             if not os.path.ismount(self.mountpoint):
                 subprocess.check_call(["mount", self.mountpoint])
         else:
+            # TODO: this test doesn't work for some reason which I discovered
+            # before but have now forgotten.
             if os.path.ismount(self.mountpoint):
                 subprocess.check_call(["umount", self.mountpoint])
 
