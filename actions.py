@@ -38,8 +38,7 @@ class SpawnAction(Action):
         self.command = command
 
     def run(self):
-        from subprocess import Popen
-        Popen(self.command, shell=True)
+        subprocess.Popen(self.command, shell=True)
 
     def __str__(self):
         return "Running %s" % self.command.split()[0]
@@ -97,7 +96,6 @@ class GossipStatusAction(Action):
         self.status = status
 
     def run(self):
-        import dbus
         bus = dbus.SessionBus()
         gossip = bus.get_object("org.gnome.Gossip", "/org/gnome/Gossip")
         if gossip:
