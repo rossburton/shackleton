@@ -219,10 +219,10 @@ class VolumeDeviceSource(Source):
         self.bus = dbus.SystemBus()
         hal_obj = self.bus.get_object("org.freedesktop.Hal", 
                                      "/org/freedesktop/Hal/Manager")
-        self.hal_iface = dbus.Interface(hal_obj,
+        self.hal = dbus.Interface(hal_obj,
                                        "org.freedesktop.Hal.Manager")
-        self.hal_iface.connect_to_signal("DeviceAdded", self.list_changed)
-        self.hal_iface.connect_to_signal("DeviceRemoved", self.list_changed)
+        self.hal.connect_to_signal("DeviceAdded", self.list_changed)
+        self.hal.connect_to_signal("DeviceRemoved", self.list_changed)
         self.device_name = args["device_name"]
         self.connected = self.check_connected_devices(self.device_name)
 
@@ -237,7 +237,7 @@ class VolumeDeviceSource(Source):
         return self.connected
 
     def check_connected_devices(self, device_name):
-        device_list = self.hal_iface.FindDeviceByCapability("volume")
+        device_list = self.hal.FindDeviceByCapability("volume")
         
         for udi in device_list:
             volume = self.bus.get_object("org.freedesktop.Hal", udi)
@@ -379,13 +379,13 @@ class DeviceSource(Source):
         self.bus = dbus.SystemBus()
         hal_obj = self.bus.get_object("org.freedesktop.Hal", 
                                      "/org/freedesktop/Hal/Manager")
-        self.hal_iface = dbus.Interface(hal_obj,
+        self.hal = dbus.Interface(hal_obj,
                                        "org.freedesktop.Hal.Manager")
-        self.hal_iface.connect_to_signal("DeviceAdded", self.device_added, arg0=self.udi)
-        self.hal_iface.connect_to_signal("DeviceRemoved", self.device_removed, arg0=self.udi)
+        self.hal.connect_to_signal("DeviceAdded", self.device_added, arg0=self.udi)
+        self.hal.connect_to_signal("DeviceRemoved", self.device_removed, arg0=self.udi)
         
         try:
-            self.present = self.hal_iface.DeviceExists(self.udi)
+            self.present = self.hal.DeviceExists(self.udi)
         except Exception, e:
             # Stupid HAL, see https://bugs.freedesktop.org/17082
             print e
@@ -402,7 +402,7 @@ class DeviceSource(Source):
         return self.present
 
     def check_present(self, device_name):
-        device_list = self.hal_iface.FindDeviceByCapability("volume")
+        device_list = self.hal.FindDeviceByCapability("volume")
         
         for udi in device_list:
             volume = self.bus.get_object("org.freedesktop.Hal", udi)
