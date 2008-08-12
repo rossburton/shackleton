@@ -105,22 +105,27 @@ class GossipStatusAction(Action):
         return "Setting presence"
 
 
-class BrightnessAction(Action):
+class HalAction(Action):
+    """Abstract action which uses HAL, to avoid boilerplate code."""
+    def __init__(self):
+        # TODO: put self.hal in class scope so that it is shared
+        self.bus = dbus.SystemBus()
+        hal_obj = self.bus.get_object('org.freedesktop.Hal', '/org/freedesktop/Hal/Manager')
+        self.hal = dbus.Interface(hal_obj, 'org.freedesktop.Hal.Manager')
+
+
+class BrightnessAction(HalAction):
     def __init__(self, level=100):
         """Level should be between 0 and 100."""
-        
+        HalAction.__init__(self)
+
         self.level = level
 
-        bus = dbus.SystemBus()
-
-        hal_obj = bus.get_object('org.freedesktop.Hal', '/org/freedesktop/Hal/Manager')
-        hal = dbus.Interface(hal_obj, 'org.freedesktop.Hal.Manager')
-
-        udis = hal.FindDeviceByCapability('laptop_panel')
+        udis = self.hal.FindDeviceByCapability('laptop_panel')
 
         if (len(udis) > 0):
             # TODO: adjust brightness of all panels?
-            dev_obj = bus.get_object('org.freedesktop.Hal', udis[0])
+            dev_obj = self.bus.get_object('org.freedesktop.Hal', udis[0])
             self.dev = dbus.Interface(dev_obj, 'org.freedesktop.Hal.Device.LaptopPanel')
         else:
             self.dev = None
