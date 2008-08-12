@@ -139,9 +139,10 @@ class BrightnessAction(HalAction):
 
 
 class MountAction(Action):
-    def __init__(self, mountpoint=None, mount=True):
-        # TODO: check mountpoint
-        # TODO: add flag to call via gtksudo? gio? policykit?
+    def __init__(self, mountpoint, mount=True):
+        if not os.path.isdir(mountpoint):
+            raise KeyError("The mountpoint %s is not a directory" % mountpoint)
+        # TODO: add flag to call via gtksudo? use gio or policykit instead?
         self.mountpoint = mountpoint
         self.mount = mount
 
