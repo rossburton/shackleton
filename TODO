@@ -20,7 +20,7 @@ Step 1: Prototype In Python
   - Active video output (blocking on xrandr event notification, should be in xserver 1.5)
 * Add more actions
   - Mute/unmute sound card
-  - Enable/disable a VPN (NM)
-  - Set presence in Telepathy
+  - Enable/disable a VPN (invoke NM)
+  - Set presence in Mission Control (Empathy etc)
 * Remove polling in main loop and instead add a PollAction class which uses
   timeouts to emit signals
