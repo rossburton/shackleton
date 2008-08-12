@@ -118,22 +118,14 @@ class BrightnessAction(HalAction):
     def __init__(self, level=100):
         """Level should be between 0 and 100."""
         HalAction.__init__(self)
-
         self.level = level
 
-        udis = self.hal.FindDeviceByCapability('laptop_panel')
-
-        if (len(udis) > 0):
-            # TODO: adjust brightness of all panels?
-            dev_obj = self.bus.get_object('org.freedesktop.Hal', udis[0])
-            self.dev = dbus.Interface(dev_obj, 'org.freedesktop.Hal.Device.LaptopPanel')
-        else:
-            self.dev = None
-
     def run(self):
-        if self.dev:
-            self.dev.SetBrightness(self.level)
-
+        for udi in self.hal.FindDeviceByCapability('laptop_panel'):
+            obj = self.bus.get_object('org.freedesktop.Hal', udi)
+            dev = dbus.Interface(obj, 'org.freedesktop.Hal.Device.LaptopPanel')
+            dev.SetBrightness(self.level)
+    
     def __str__(self):
         return "Setting display brightness to %d" % self.level
 
