@@ -154,7 +154,6 @@ class MountAction(Action):
             return "Unmounting %s" % self.mountpoint
 
 
-
 class DefaultPrinter(Action):
     def __init__(self, name):
         if name is None:
