@@ -52,11 +52,19 @@ class Context(gobject.GObject):
 
     def runEnteringActions(self):
         logger.info ("Entering %s" % self)
-        [a.run() for a in self.entering_actions]
+        for a in self.entering_actions:
+            try:
+                a.run()
+            except Exception, e:
+                logger.warning("Cannot enter %s: %s" % (self, e))
 
     def runLeavingActions(self):
         logger.info ("Leaving %s" % self)
-        [a.run() for a in self.leaving_actions]
+        for a in self.leaving_actions:
+            try:
+                a.run()
+            except Exception, e:
+                logger.warning("Cannot leave %s: %s" % (self, e))
 
     def evaluateRules(self):
         # TODO: Provide other ways to evaluate rules with OR and AND? Let's have
