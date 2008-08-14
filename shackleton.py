@@ -24,8 +24,6 @@ from optparse import OptionParser
 from dbus.mainloop.glib import DBusGMainLoop
 DBusGMainLoop(set_as_default=True)
 
-logger = logging.getLogger("shackleton")
-
 parser = OptionParser()
 parser.add_option("-d", "--debug", action="store_true", default=False, help="enable debugging")
 parser.add_option("-c", "--config", default=None, help="configuration file to read")
@@ -33,6 +31,10 @@ parser.add_option("-c", "--config", default=None, help="configuration file to re
 
 if options.debug:
     logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.WARNING)
+
+logger = logging.getLogger("shackleton")
 
 contexts = config.parse(options.config)
 
