@@ -138,6 +138,42 @@ class WifiNetworkSource(Source):
         return False
 gobject.type_register(WifiNetworkSource)
 
+class WicdNetworkDaemonSource(Source):
+    __instance = None
+    def __new__(cls, args):
+        # Make this a singleton
+        if not cls.__instance:
+            s = super(cls,WicdNetworkDaemonSource).__new__(cls)
+            Source.__init__(s, args)
+            s.bus = dbus.SystemBus()
+            s.wicd = s.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
+            s.wicd.connect_to_signal("StatusChanged", s.state_changed)
+            cls.__instance = s
+        return cls.__instance
+    
+    @staticmethod
+    def getProperties():
+        return (("ssid", list),)
+    
+    def getPollInterval(self):
+        return 0
+
+    def state_changed(self, state, info):
+        self.emit("changed")
+    
+    def evaluate(self, args):
+        # NOTE: /wicd/wicd-daemon.py
+        state, info = self.wicd.GetConnectionStatus()
+        try:
+            ssid = info[1]
+            if ssid in args["ssid"]:
+                return True
+            else:
+                return False
+        except IndexError:
+            return False
+gobject.type_register(WicdNetworkDaemonSource)
+
 
 class GConfSource(Source):
     __instances = {}
