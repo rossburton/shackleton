@@ -32,7 +32,7 @@ class Rule:
         c = getattr(sources, name, None)
         if c and c is not sources.Source and issubclass(c, sources.Source):
             return c(args)
-        raise NameError
+        raise NameError, "Cannot find source %s" % name
 
     def evaluate(self):
         return self.source.evaluate(self.args)
