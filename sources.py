@@ -42,6 +42,30 @@ class Source(gobject.GObject):
         raise NotImplementedError
 gobject.type_register(Source)
 
+class DayOfWeekSource(Source):
+    __instance = None
+    def __new__(cls, args):
+        # Make this a singleton
+        if not cls.__instance:
+            cls.__instance = super(cls,DayOfWeekSource).__new__(cls)
+            Source.__init__(cls.__instance, args)
+        return cls.__instance
+    
+    @staticmethod
+    def getProperties():
+        return (("weekday", list),)
+
+    def getPollInterval(self):
+        # Poll every minute
+        # TODO: don't be a singleton and instead schedule a queue of wakeups and
+        # emit signals.
+        return 60
+
+    def evaluate(self, args):
+        weekday = args["weekday"]
+        now = datetime.datetime.now().strftime("%A").lower()
+        return now == weekday
+gobject.type_register(DayOfWeekSource)
 
 class TimeSource(Source):
 

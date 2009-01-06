@@ -14,7 +14,6 @@ Step 1: Prototype In Python
 
 * Add basic setup.py to install
 * Add more sources
-  - Day of week
   - Geoclue street address
   - Geoclue position
   - Active video output (blocking on xrandr event notification, should be in xserver 1.5)
