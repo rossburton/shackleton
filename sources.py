@@ -242,18 +242,18 @@ class _NetworkManager08NetworkSource(WifiNetworkSource):
         return False
 gobject.type_register(_NetworkManager08NetworkSource)
 
-class WicdNetworkDaemonSource(Source):
-    __instance = None
-    def __new__(cls, args):
-        # Make this a singleton
-        if not cls.__instance:
-            s = super(cls,WicdNetworkDaemonSource).__new__(cls)
-            Source.__init__(s, args)
-            s.bus = dbus.SystemBus()
-            s.wicd = s.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
-            s.wicd.connect_to_signal("StatusChanged", s.state_changed)
-            cls.__instance = s
-        return cls.__instance
+
+class _WicdNetworkSource(WifiNetworkSource):
+    @staticmethod
+    def test():
+        bus = dbus.SystemBus()
+        return self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon') is not None
+
+    def __init__(self, args):
+        WifiNetworkSource.__init__(self, args)
+        self.bus = dbus.SystemBus()
+        self.wicd = self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
+        self.wicd.connect_to_signal("StatusChanged", self.state_changed)
     
     @staticmethod
     def getProperties():
@@ -276,7 +276,7 @@ class WicdNetworkDaemonSource(Source):
                 return False
         except IndexError:
             return False
-gobject.type_register(WicdNetworkDaemonSource)
+gobject.type_register(_WicdNetworkSource)
 
 
 class GConfSource(Source):
