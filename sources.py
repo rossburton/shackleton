@@ -118,7 +118,7 @@ class WifiNetworkSource(Source):
         raise NotImplementedError
 gobject.type_register(WifiNetworkSource)
 
-class _NetworkManagerNetworkSource(WifiNetworkSource):
+class _NetworkManager06NetworkSource(WifiNetworkSource):
     NM_STATE_CONNECTED = 3
     NM_STATE_DISCONNECTED = 4
     NM_DEVICE_TYPE_802_11_WIRELESS = 2
@@ -178,7 +178,7 @@ class _NetworkManagerNetworkSource(WifiNetworkSource):
                 return True
         
         return False
-gobject.type_register(_NetworkManagerNetworkSource)
+gobject.type_register(_NetworkManager06NetworkSource)
 
 class WicdNetworkDaemonSource(Source):
     __instance = None
