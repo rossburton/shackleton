@@ -116,6 +116,10 @@ class WifiNetworkSource(Source):
     def test():
         # This method should be implemented by subclasses
         raise NotImplementedError
+
+    @staticmethod
+    def getProperties():
+        return (("ssid", list),)    
 gobject.type_register(WifiNetworkSource)
 
 class _NetworkManager06NetworkSource(WifiNetworkSource):
@@ -138,10 +142,6 @@ class _NetworkManager06NetworkSource(WifiNetworkSource):
         self.bus = dbus.SystemBus()
         self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
         self.nm.connect_to_signal("StateChange", self.state_changed)
-    
-    @staticmethod
-    def getProperties():
-        return (("ssid", list),)
     
     def getPollInterval(self):
         return 0
@@ -201,10 +201,6 @@ class _NetworkManager08NetworkSource(WifiNetworkSource):
         self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
         self.nm.connect_to_signal("StateChange", self.state_changed)
     
-    @staticmethod
-    def getProperties():
-        return (("ssid", list),)
-    
     def getPollInterval(self):
         return 0
 
@@ -254,10 +250,6 @@ class _WicdNetworkSource(WifiNetworkSource):
         self.bus = dbus.SystemBus()
         self.wicd = self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
         self.wicd.connect_to_signal("StatusChanged", self.state_changed)
-    
-    @staticmethod
-    def getProperties():
-        return (("ssid", list),)
     
     def getPollInterval(self):
         return 0
