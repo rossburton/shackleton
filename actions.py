@@ -86,7 +86,8 @@ class WallpaperAction(Action):
     def __str__(self):
         return "Setting Wallpaper"
 
-
+# TODO: merge Gossip and Pidgen status actions into a single action which
+# detects which application to use
 class GossipStatusAction(Action):
     def __init__(self, state="available", status="Available"):
         if state not in ('available', 'busy', 'away', 'xa'):
@@ -101,6 +102,26 @@ class GossipStatusAction(Action):
         if gossip:
             gossip.SetPresence(self.state, self.status)
     
+    def __str__(self):
+        return "Setting presence"
+
+class PidginStatusAction(Action):
+    def __init__(self, state="available", status="Available"):
+        if state not in ('available', 'busy', 'away', 'invisible'):
+            raise KeyError("Invalid state ('available', 'busy', 'away', 'invisible')")
+
+        self.state = state
+        self.status = status
+
+    def run(self):
+        statuses = {"invisible": dbus.Int32(561), "available": dbus.Int32(557), "away": dbus.Int32(559), "busy": dbus.Int32(565)}
+        bus = dbus.SessionBus()
+        obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+        purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
+        if purple:
+            purple.PurpleSavedstatusSetMessage(statuses[self.state], self.status)
+            purple.PurpleSavedstatusActivate(statuses[self.state])
+
     def __str__(self):
         return "Setting presence"
 
