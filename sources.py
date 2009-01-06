@@ -180,6 +180,68 @@ class _NetworkManager06NetworkSource(WifiNetworkSource):
         return False
 gobject.type_register(_NetworkManager06NetworkSource)
 
+class _NetworkManager08NetworkSource(WifiNetworkSource):
+    NM_STATE_CONNECTED = 3
+    NM_DEVICE_STATE_ACTIVATED = 8
+    NM_DEVICE_TYPE_802_11_WIRELESS = 2
+
+    @staticmethod
+    def test():
+        bus = dbus.SystemBus()
+        nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
+        try:
+            nm.GetDevices(dbus_interface='org.freedesktop.NetworkManager')
+            return True
+        except:
+            return False
+
+    def __init__(self, args):
+        WifiNetworkSource.__init__(self, args)
+        self.bus = dbus.SystemBus()
+        self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
+        self.nm.connect_to_signal("StateChange", self.state_changed)
+    
+    @staticmethod
+    def getProperties():
+        return (("ssid", list),)
+    
+    def getPollInterval(self):
+        return 0
+
+    def state_changed(self, state):
+        self.emit("changed")
+    
+    def evaluate(self, args):
+        state = self.nm.state()
+        if state != self.NM_STATE_CONNECTED:
+            return False
+        
+        devices = self.nm.GetDevices()
+        for path in devices:
+            device = self.bus.get_object('org.freedesktop.NetworkManager', path)
+
+            devicetype = device.Get("org.freedesktop.NetworkManager.Device", "DeviceType")
+            if devicetype != self.NM_DEVICE_TYPE_802_11_WIRELESS:
+                # Device type is not wireless
+                continue
+             
+            state = device.Get("org.freedesktop.NetworkManager.Device", "State")
+            if state != self.NM_DEVICE_STATE_ACTIVATED:
+                continue
+
+            network_path = device.Get("org.freedesktop.NetworkManager.Device.Wireless", "ActiveAccessPoint")
+            if not network_path:
+                # No active network
+                continue
+            
+            network = self.bus.get_object('org.freedesktop.NetworkManager', network_path)
+            ssid = network.Get("org.freedesktop.NetworkManager.AccessPoint", "Ssid", byte_arrays=True)
+            if ssid in args["ssid"]:
+                return True
+        
+        return False
+gobject.type_register(_NetworkManager08NetworkSource)
+
 class WicdNetworkDaemonSource(Source):
     __instance = None
     def __new__(cls, args):
