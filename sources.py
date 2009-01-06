@@ -105,21 +105,39 @@ gobject.type_register(TimeSource)
 
 
 class WifiNetworkSource(Source):
+    def __new__(cls, args):
+        # TODO: bring back the singleton
+        for subclass in WifiNetworkSource.__subclasses__():
+            if subclass.test():
+                return super(cls, subclass).__new__(subclass, args)
+        raise Exception, "Cannot detect network manager"
+
+    @staticmethod
+    def test():
+        # This method should be implemented by subclasses
+        raise NotImplementedError
+gobject.type_register(WifiNetworkSource)
+
+class _NetworkManagerNetworkSource(WifiNetworkSource):
     NM_STATE_CONNECTED = 3
     NM_STATE_DISCONNECTED = 4
     NM_DEVICE_TYPE_802_11_WIRELESS = 2
-    
-    __instance = None
-    def __new__(cls, args):
-        # Make this a singleton
-        if not cls.__instance:
-            s = super(cls,WifiNetworkSource).__new__(cls)
-            Source.__init__(s, args)
-            s.bus = dbus.SystemBus()
-            s.nm = s.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
-            s.nm.connect_to_signal("StateChange", s.state_changed)
-            cls.__instance = s
-        return cls.__instance
+
+    @staticmethod
+    def test():
+        bus = dbus.SystemBus()
+        nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
+        try:
+            nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
+            return True
+        except:
+            return False
+
+    def __init__(self, args):
+        WifiNetworkSource.__init__(self, args)
+        self.bus = dbus.SystemBus()
+        self.nm = self.bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
+        self.nm.connect_to_signal("StateChange", self.state_changed)
     
     @staticmethod
     def getProperties():
@@ -160,7 +178,7 @@ class WifiNetworkSource(Source):
                 return True
         
         return False
-gobject.type_register(WifiNetworkSource)
+gobject.type_register(_NetworkManagerNetworkSource)
 
 class WicdNetworkDaemonSource(Source):
     __instance = None
