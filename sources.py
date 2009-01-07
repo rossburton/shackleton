@@ -133,8 +133,8 @@ class _NetworkManager06NetworkSource(WifiNetworkSource):
     @staticmethod
     def test():
         bus = dbus.SystemBus()
-        nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
         try:
+            nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
             nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
             return True
         except:
@@ -191,8 +191,8 @@ class _NetworkManager08NetworkSource(WifiNetworkSource):
     @staticmethod
     def test():
         bus = dbus.SystemBus()
-        nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
         try:
+            nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
             nm.GetDevices(dbus_interface='org.freedesktop.NetworkManager')
             return True
         except:
@@ -246,7 +246,11 @@ class _WicdNetworkSource(WifiNetworkSource):
     @staticmethod
     def test():
         bus = dbus.SystemBus()
-        return self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon') is not None
+        try:
+            self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
+            return True
+        except:
+            return False
 
     def __init__(self, args):
         WifiNetworkSource.__init__(self, args)
