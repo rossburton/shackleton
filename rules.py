@@ -16,22 +16,23 @@
 
 class Rule:
     def __init__(self, source, **kwargs):
-        self.source = self.__getSource(source, kwargs)
-        self.args = {}
+        cls = self.__getSourceClass(source)
 
-        # Parse the properties
-        for (name, expected_type) in self.source.getProperties():
+        self.args = {}
+        for (name, expected_type) in cls.getProperties():
             v = kwargs[name]
             if not isinstance(v, expected_type):
                 # TODO: beat the value into shape if we need to
                 raise TypeError("%s isn't a %s" % (name, expected_type))
             self.args[name] = v
+        
+        self.source = cls(self.args)
 
-    def __getSource(self, name, args):
+    def __getSourceClass(self, name):
         import sources
         c = getattr(sources, name, None)
         if c and c is not sources.Source and issubclass(c, sources.Source):
-            return c(args)
+            return c
         raise NameError, "Cannot find source %s" % name
 
     def evaluate(self):
