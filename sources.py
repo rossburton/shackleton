@@ -104,6 +104,9 @@ class TimeSource(Source):
 gobject.type_register(TimeSource)
 
 
+# TODO: rearchitect this so that the network sources (wifi network, ip address,
+# etc) inherit from Source and use a Network singleton with magic constructor,
+# providing simple accessors for the functionality required.
 class WifiNetworkSource(Source):
     def __new__(cls, args):
         # TODO: bring back the singleton
