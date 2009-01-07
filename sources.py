@@ -42,6 +42,7 @@ class Source(gobject.GObject):
         raise NotImplementedError
 gobject.type_register(Source)
 
+
 class DayOfWeekSource(Source):
     __instance = None
     def __new__(cls, args):
@@ -66,6 +67,7 @@ class DayOfWeekSource(Source):
         now = datetime.datetime.now().strftime("%A").lower()
         return now == weekday
 gobject.type_register(DayOfWeekSource)
+
 
 class TimeSource(Source):
 
@@ -125,6 +127,7 @@ class WifiNetworkSource(Source):
         return (("ssid", list),)    
 gobject.type_register(WifiNetworkSource)
 
+
 class _NetworkManager06NetworkSource(WifiNetworkSource):
     NM_STATE_CONNECTED = 3
     NM_STATE_DISCONNECTED = 4
@@ -182,6 +185,7 @@ class _NetworkManager06NetworkSource(WifiNetworkSource):
         
         return False
 gobject.type_register(_NetworkManager06NetworkSource)
+
 
 class _NetworkManager08NetworkSource(WifiNetworkSource):
     NM_STATE_CONNECTED = 3
