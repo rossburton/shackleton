@@ -16,6 +16,21 @@
 
 import datetime, dbus, gobject
 
+class Singleton(gobject.GObjectMeta):
+    """
+    Magic metaclass to make an object a singleton.  Thanks to Marco Pesenti
+    Gritti for mentioning this on the Sugar list.
+    """
+    def __init__(klass, name, bases, dict):
+        gobject.GObjectMeta.__init__(klass, name, bases, dict)
+        klass.__instance = None
+
+    def __call__(klass, *args, **kwargs):
+        if klass.__instance is None:
+            klass.__instance = gobject.GObjectMeta.__call__(klass, *args, **kwargs)
+        return klass.__instance
+
+
 class Source(gobject.GObject):
     # TODO: Marco Polo has the neat ability for sources to suggest values for
     # the properties
