@@ -137,7 +137,7 @@ class _NetworkManager06NetworkSource(WifiNetworkSource):
             nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
             nm.getDevices(dbus_interface='org.freedesktop.NetworkManager')
             return True
-        except:
+        except dbus.exceptions.DBusException:
             return False
 
     def __init__(self, args):
@@ -195,7 +195,7 @@ class _NetworkManager08NetworkSource(WifiNetworkSource):
             nm = bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager')
             nm.GetDevices(dbus_interface='org.freedesktop.NetworkManager')
             return True
-        except:
+        except dbus.exceptions.DBusException:
             return False
 
     def __init__(self, args):
@@ -249,7 +249,7 @@ class _WicdNetworkSource(WifiNetworkSource):
         try:
             self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
             return True
-        except:
+        except dbus.exceptions.DBusException:
             return False
 
     def __init__(self, args):
