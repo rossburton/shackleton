@@ -59,14 +59,8 @@ gobject.type_register(Source)
 
 
 class DayOfWeekSource(Source):
-    __instance = None
-    def __new__(cls, args):
-        # Make this a singleton
-        if not cls.__instance:
-            cls.__instance = super(cls,DayOfWeekSource).__new__(cls)
-            Source.__init__(cls.__instance, args)
-        return cls.__instance
-    
+    __metaclass__ = Singleton
+
     @staticmethod
     def getProperties():
         return (("weekday", list),)
@@ -85,14 +79,7 @@ gobject.type_register(DayOfWeekSource)
 
 
 class TimeSource(Source):
-
-    __instance = None
-    def __new__(cls, args):
-        # Make this a singleton
-        if not cls.__instance:
-            cls.__instance = super(cls,TimeSource).__new__(cls)
-            Source.__init__(cls.__instance, args)
-        return cls.__instance
+    __metaclass__ = Singleton
     
     @staticmethod
     def getProperties():
