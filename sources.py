@@ -247,7 +247,7 @@ class _WicdNetworkSource(WifiNetworkSource):
     def test():
         bus = dbus.SystemBus()
         try:
-            self.bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
+            bus.get_object('org.wicd.daemon', '/org/wicd/daemon')
             return True
         except dbus.exceptions.DBusException:
             return False
