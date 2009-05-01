@@ -8,20 +8,11 @@
 	    ],
 	    "enter" : [
 		{
-		    "action": "MountAction",
-		    "mountpoint": "/media/home"
-		},
-		{
 		    "action": "ScreensaverLockAction",
 		    "locked": false
 		}
 	    ],
 	    "leave": [
-		{
-		    "action": "MountAction",
-		    "mountpoint": "/media/home",
-		    "mount": false
-		},
 		{
 		    "action": "ScreensaverLockAction",
 		    "locked": true
@@ -34,7 +25,7 @@
 	    "rules" : [
 		{
 		    "source": "WifiNetworkSource",
-		    "ssid": ["OH"]
+		    "ssid": ["Guest"]
 		}
 	    ],
 	    "enter": [
@@ -121,6 +112,26 @@
 		{
 		    "source": "DeviceSource",
 		    "udi": "/org/freedesktop/Hal/devices/usb_device_dda_2026_0000001"
+		}
+	    ]
+	},
+
+	"laptop-screen" : {
+	    "rules" : [
+		{
+		    "source": "ScreenSizeSource",
+                    "width": 1024,
+                    "height": 768
+		}
+	    ]
+	},
+
+	"big-screen" : {
+	    "rules" : [
+		{
+		    "source": "ScreenSizeSource",
+                    "width": 1680,
+                    "height": 1050
 		}
 	    ]
 	}
