@@ -570,3 +570,46 @@ class DeviceSource(Source):
             self.present = False
             self.emit("changed")
 gobject.type_register(DeviceSource)
+
+
+class ScreenSizeSource(Source):
+    """Watches the size of the default screen."""
+    
+    def __init__(self, args):
+        import gtk
+        Source.__init__(self, args)
+
+        self.width = args["width"]
+        self.height = args["height"]
+
+        display = gtk.gdk.display_get_default()
+        # TODO: use screen property
+        screen = display.get_default_screen()
+        self.current_width = screen.get_width()
+        self.current_height = screen.get_height()
+        self.active = self.compare_size()
+        screen.connect("size-changed", self.size_changed)
+
+    @staticmethod
+    def getProperties():
+        # TODO: add optional screen property
+        return (("width", int), ("height", int))
+    
+    def getPollInterval(self):
+        return 0
+
+    def compare_size(self):
+        return self.width == self.current_width and self.height == self.current_height
+
+    def evaluate(self, args):
+        return self.active
+    
+    def size_changed(self, screen):
+        self.current_width = screen.get_width()
+        self.current_height = screen.get_height()
+
+        old_active = self.active
+        self.active = self.compare_size()
+        if old_active != self.active:
+            self.emit("changed")
+gobject.type_register(ScreenSizeSource)

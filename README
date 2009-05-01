@@ -28,6 +28,7 @@ Sources:
 - Current IP address
 - Video output name (i.e. VGA enabled)
 - Connected Volumes (i.e. USB hard drive)
+- Screen size
 
 Actions:
 - Run command
