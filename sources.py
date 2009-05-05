@@ -226,14 +226,13 @@ class _NetworkManager08NetworkSource(WifiNetworkSource):
         for path in devices:
             device = self.bus.get_object('org.freedesktop.NetworkManager', path)
             device_props = dbus.Interface(device, dbus_interface='org.freedesktop.DBus.Properties')
+            props = device_props.GetAll("org.freedesktop.NetworkManager.Device")
 
-            devicetype = device_props.Get("org.freedesktop.NetworkManager.Device", "DeviceType")
-            if devicetype != self.NM_DEVICE_TYPE_802_11_WIRELESS:
+            if props["DeviceType"] != self.NM_DEVICE_TYPE_802_11_WIRELESS:
                 # Device type is not wireless
                 continue
              
-            state = device_props.Get("org.freedesktop.NetworkManager.Device", "State")
-            if state != self.NM_DEVICE_STATE_ACTIVATED:
+            if props["State"] != self.NM_DEVICE_STATE_ACTIVATED:
                 continue
 
             network_path = device_props.Get("org.freedesktop.NetworkManager.Device.Wireless", "ActiveAccessPoint")
