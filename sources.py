@@ -324,18 +324,40 @@ gobject.type_register(GConfSource)
 
 
 class BatterySource(Source):
-
-    __instance = None
     def __new__(cls, args):
-        # Make this a singleton
-        if not cls.__instance:
-            s = super(cls, BatterySource).__new__(cls)
-            Source.__init__(s, args)
-            bus = dbus.SessionBus()
-            s.pm = bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
-            s.pm.connect_to_signal("OnBatteryChanged", s.changed)
-            cls.__instance = s
-        return cls.__instance
+        # TODO: bring back the singleton
+        for subclass in BatterySource.__subclasses__():
+            if subclass.test():
+                return super(cls, subclass).__new__(subclass, args)
+        raise Exception, "Cannot detect power manager"
+
+    @staticmethod
+    def test():
+        # This method should be implemented by subclasses
+        raise NotImplementedError
+
+    @staticmethod
+    def getProperties():
+        return (("on_battery", bool),)    
+gobject.type_register(BatterySource)
+
+
+class _PowerManagementSource(BatterySource):
+    def __init__(self, args):
+        BatterySource.__init__(self, args)
+        self.bus = dbus.SessionBus()
+        self.pm = bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
+        self.pm.connect_to_signal("OnBatteryChanged", self.changed)
+
+    @staticmethod
+    def test():
+        bus = dbus.SessionBus()
+        try:
+            pm = bus.get_object('org.freedesktop.PowerManagement', '/org/freedesktop/PowerManagement')
+            pm.getDevices(dbus_interface='org.freedesktop.PowerManagement')
+            return True
+        except dbus.exceptions.DBusException:
+            return False
 
     @staticmethod
     def getProperties():
@@ -345,13 +367,46 @@ class BatterySource(Source):
         return 0
     
     def changed(self, bool):
-        # TODO: cache the value and use it when evaluating to avoid DBus calls
         self.emit("changed")
     
     def evaluate(self, args):
         on_battery = self.pm.GetOnBattery()
         return on_battery == args["on_battery"]
-gobject.type_register(BatterySource)
+gobject.type_register(_PowerManagementSource)
+
+
+class _DeviceKitPowerSource(BatterySource):
+    def __init__(self, args):
+        BatterySource.__init__(self, args)
+        self.bus = dbus.SystemBus()
+        self.devicekit = self.bus.get_object('org.freedesktop.DeviceKit.Power', '/org/freedesktop/DeviceKit/Power')
+        self.idevicekit = dbus.Interface(self.devicekit, dbus_interface='org.freedesktop.DBus.Properties')
+        self.devicekit.connect_to_signal("OnChanged", self.changed)
+
+    @staticmethod
+    def test():
+        bus = dbus.SystemBus()
+        try:
+            devicekit = bus.get_object('org.freedesktop.DeviceKit.Power', '/org/freedesktop/DeviceKit/Power')
+            idevicekit = dbus.Interface(devicekit, dbus_interface='org.freedesktop.DBus.Properties')
+            return True
+        except dbus.exceptions.DBusException:
+            return False
+
+    @staticmethod
+    def getProperties():
+        return (("on_battery", bool),)
+    
+    def getPollInterval(self):
+        return 0
+    
+    def changed(self, bool):
+        self.emit("changed")
+    
+    def evaluate(self, args):
+        on_battery = self.idevicekit.Get("org.freedesktop.DeviceKit.Power", "on-battery")
+        return bool(on_battery) == args["on_battery"]
+gobject.type_register(_DeviceKitPowerSource)
 
 
 class VolumeDeviceSource(Source):
