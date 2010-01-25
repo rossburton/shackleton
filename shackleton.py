@@ -16,9 +16,12 @@
 # St, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-import config, notify
+import config
+import notify
+import gobject
+import logging
+import sys
 
-import gobject, logging
 from optparse import OptionParser
 
 from dbus.mainloop.glib import DBusGMainLoop
@@ -36,7 +39,11 @@ else:
 
 logger = logging.getLogger("shackleton")
 
-contexts = config.parse(options.config)
+try:
+    contexts = config.parse(options.config)
+except IOError, e:
+    logger.warning(str(e))
+    sys.exit(1)
 
 current_contexts = set()
 
