@@ -68,6 +68,43 @@ class ScreensaverLockAction(GConfAction):
         else:
             return "Disabling screensaver lock"
 
+class ProxyAction(Action):
+    def __init__(self, mode="none", use_http_proxy=False, host="", port=8080, 
+        use_same_proxy=False, authentication_user="", authentication_password=""):
+
+        if mode not in ('none', 'manual'):
+            raise KeyError("Invalid mode ('none', 'manual')")
+        self.mode = mode.encode()
+
+        self.host = host.encode()
+        self.port = port
+        self.use_http_proxy = use_http_proxy
+        self.use_same_proxy = use_same_proxy
+        self.authentication_user = authentication_user.encode()
+        self.authentication_password = authentication_password.encode()
+        if self.authentication_user != "":
+            self.use_authentication = True
+        else:
+            self.use_authentication = False
+
+    def run(self):
+        _prefixes = ['ftp', 'old_ftp', 'secure', 'old_secure', 'socks', 'old_socks']
+        import gconf
+        client = gconf.client_get_default()
+        client.set_value("/system/proxy/mode", self.mode)
+        for prefix in _prefixes:
+            client.set_value("/system/proxy/" + prefix + "_host", self.host)
+            client.set_value("/system/proxy/" + prefix + "_port", self.port)
+        client.set_value("/system/http_proxy/use_http_proxy", self.use_http_proxy)
+        client.set_value("/system/http_proxy/host", self.host)
+        client.set_value("/system/http_proxy/port", self.port)
+        client.set_value("/system/http_proxy/use_same_proxy", self.use_same_proxy)
+        client.set_value("/system/http_proxy/authentication_user", self.authentication_user)
+        client.set_value("/system/http_proxy/authentication_password", self.authentication_password)
+        client.set_value("/system/http_proxy/use_authentication", self.use_authentication)
+
+    def __str__(self):
+        return "Setting Proxy"
 
 class WallpaperAction(Action):
     def __init__(self, image, mode="zoom"):
